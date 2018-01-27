@@ -1,0 +1,60 @@
+type Post {
+  id: ID! @unique
+  isPublished: Boolean! @default(value: "false")
+  title: String!
+  text: String!
+}
+
+type User {
+  id: ID! @unique
+  email: String! @unique
+  password: String!
+  name: String!
+  posts: [Post!]!
+}
+
+type Customer {
+  id: ID! @unique
+  first: String!
+  last: String!
+  street: String
+  city: String
+  state: String
+  zip: String
+  cardNum: String
+  orders: [Order!]!
+}
+type Order {
+  id: ID! @unique
+  customer: Customer
+  lineItems: [LineItem!]!
+
+}
+
+type LineItem {
+  id: ID! @unique
+  order: Order
+  product: Product
+  purchasePrice: Int!
+}
+
+type Product {
+  id: ID! @unique
+  lineItems: [LineItem!]!
+  price: Int!
+  name: String!
+  ingredients: [Ingredient!]!
+}
+
+type Ingredient {
+  id: ID! @unique
+  name: String!
+  category: Category!
+  qty: Int!
+}
+
+type Category {
+  id: ID! @unique
+  name: String!
+  ingredients: [Ingredient!]!
+}
