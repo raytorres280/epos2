@@ -15,8 +15,7 @@
     "noImplicitAny": false,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    "jsx-alignment": false
+    "noUnusedLocals": true
   },
   "exclude": [
     "node_modules",

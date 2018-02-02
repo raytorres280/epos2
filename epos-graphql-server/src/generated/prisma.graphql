@@ -39,15 +39,18 @@ type LineItem implements Node {
 
 type Order implements Node {
   id: ID!
-  customer(where: CustomerWhereInput): Customer
+  customer(where: CustomerWhereInput): Customer!
   lineItems(where: LineItemWhereInput, orderBy: LineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LineItem!]
 }
 
 type Post implements Node {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   isPublished: Boolean!
   title: String!
   text: String!
+  author(where: UserWhereInput): User!
 }
 
 type Product implements Node {
@@ -487,6 +490,8 @@ input CustomerWhereUniqueInput {
   id: ID
 }
 
+scalar DateTime
+
 type IngredientConnection {
   pageInfo: PageInfo!
   edges: [IngredientEdge]!
@@ -868,7 +873,7 @@ type OrderConnection {
 }
 
 input OrderCreateInput {
-  customer: CustomerCreateOneWithoutOrdersInput
+  customer: CustomerCreateOneWithoutOrdersInput!
   lineItems: LineItemCreateManyWithoutOrderInput
 }
 
@@ -887,7 +892,7 @@ input OrderCreateWithoutCustomerInput {
 }
 
 input OrderCreateWithoutLineItemsInput {
-  customer: CustomerCreateOneWithoutOrdersInput
+  customer: CustomerCreateOneWithoutOrdersInput!
 }
 
 type OrderEdge {
@@ -1022,11 +1027,18 @@ input PostCreateInput {
   isPublished: Boolean
   title: String!
   text: String!
+  author: UserCreateOneWithoutPostsInput!
 }
 
-input PostCreateManyInput {
-  create: [PostCreateInput!]
+input PostCreateManyWithoutAuthorInput {
+  create: [PostCreateWithoutAuthorInput!]
   connect: [PostWhereUniqueInput!]
+}
+
+input PostCreateWithoutAuthorInput {
+  isPublished: Boolean
+  title: String!
+  text: String!
 }
 
 type PostEdge {
@@ -1037,20 +1049,22 @@ type PostEdge {
 enum PostOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
   isPublished_ASC
   isPublished_DESC
   title_ASC
   title_DESC
   text_ASC
   text_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type PostPreviousValues {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   isPublished: Boolean!
   title: String!
   text: String!
@@ -1077,13 +1091,33 @@ input PostUpdateInput {
   isPublished: Boolean
   title: String
   text: String
+  author: UserUpdateOneWithoutPostsInput
 }
 
-input PostUpdateManyInput {
-  create: [PostCreateInput!]
+input PostUpdateManyWithoutAuthorInput {
+  create: [PostCreateWithoutAuthorInput!]
   connect: [PostWhereUniqueInput!]
   disconnect: [PostWhereUniqueInput!]
   delete: [PostWhereUniqueInput!]
+  update: [PostUpdateWithoutAuthorInput!]
+  upsert: [PostUpsertWithoutAuthorInput!]
+}
+
+input PostUpdateWithoutAuthorDataInput {
+  isPublished: Boolean
+  title: String
+  text: String
+}
+
+input PostUpdateWithoutAuthorInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateWithoutAuthorDataInput!
+}
+
+input PostUpsertWithoutAuthorInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateWithoutAuthorDataInput!
+  create: PostCreateWithoutAuthorInput!
 }
 
 input PostWhereInput {
@@ -1103,6 +1137,22 @@ input PostWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   isPublished: Boolean
   isPublished_not: Boolean
   title: String
@@ -1133,6 +1183,7 @@ input PostWhereInput {
   text_not_starts_with: String
   text_ends_with: String
   text_not_ends_with: String
+  author: UserWhereInput
 }
 
 input PostWhereUniqueInput {
@@ -1337,7 +1388,18 @@ input UserCreateInput {
   email: String!
   password: String!
   name: String!
-  posts: PostCreateManyInput
+  posts: PostCreateManyWithoutAuthorInput
+}
+
+input UserCreateOneWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutPostsInput {
+  email: String!
+  password: String!
+  name: String!
 }
 
 type UserEdge {
@@ -1388,7 +1450,33 @@ input UserUpdateInput {
   email: String
   password: String
   name: String
-  posts: PostUpdateManyInput
+  posts: PostUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateOneWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  connect: UserWhereUniqueInput
+  disconnect: UserWhereUniqueInput
+  delete: UserWhereUniqueInput
+  update: UserUpdateWithoutPostsInput
+  upsert: UserUpsertWithoutPostsInput
+}
+
+input UserUpdateWithoutPostsDataInput {
+  email: String
+  password: String
+  name: String
+}
+
+input UserUpdateWithoutPostsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutPostsDataInput!
+}
+
+input UserUpsertWithoutPostsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutPostsDataInput!
+  create: UserCreateWithoutPostsInput!
 }
 
 input UserWhereInput {

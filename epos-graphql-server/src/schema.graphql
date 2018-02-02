@@ -10,6 +10,8 @@ type Query {
   allOrders: [Order!]!
   customerOrders(id: ID!): [Order!]!
   payForOrder(id: ID!): Post
+  customers: [Customer!]!
+  customer(id: ID!): Customer
 }
 
 type Mutation {
@@ -18,6 +20,9 @@ type Mutation {
   createDraft(title: String!, text: String!): Post!
   publish(id: ID!): Post!
   deletePost(id: ID!): Post!
+  createCustomer(first: String!, last: String!,
+  street: String, city: String, state: String, zip: String, cardNum: String): Customer!
+  orders: [Order!]!
 }
 
 type AuthPayload {
@@ -31,3 +36,16 @@ type User {
   name: String!
   posts: [Post!]!
 }
+
+type Customer implements Node {
+  id: ID!
+  first: String!
+  last: String!
+  street: String
+  city: String
+  state: String
+  zip: String
+  cardNum: String
+  orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order!]
+}
+

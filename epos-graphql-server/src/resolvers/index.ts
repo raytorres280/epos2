@@ -1,6 +1,7 @@
 import { Query } from './Query'
 import { auth } from './Mutation/auth'
 import { post } from './Mutation/post'
+import { customer } from './Mutation/customer'
 import { AuthPayload } from './AuthPayload'
 
 export default {
@@ -8,6 +9,7 @@ export default {
   Mutation: {
     ...auth,
     ...post,
+    ...customer
   },
   AuthPayload,
 }

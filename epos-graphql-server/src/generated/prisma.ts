@@ -43,15 +43,18 @@ type LineItem implements Node {
 
 type Order implements Node {
   id: ID!
-  customer(where: CustomerWhereInput): Customer
+  customer(where: CustomerWhereInput): Customer!
   lineItems(where: LineItemWhereInput, orderBy: LineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LineItem!]
 }
 
 type Post implements Node {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   isPublished: Boolean!
   title: String!
   text: String!
+  author(where: UserWhereInput): User!
 }
 
 type Product implements Node {
@@ -491,6 +494,8 @@ input CustomerWhereUniqueInput {
   id: ID
 }
 
+scalar DateTime
+
 type IngredientConnection {
   pageInfo: PageInfo!
   edges: [IngredientEdge]!
@@ -872,7 +877,7 @@ type OrderConnection {
 }
 
 input OrderCreateInput {
-  customer: CustomerCreateOneWithoutOrdersInput
+  customer: CustomerCreateOneWithoutOrdersInput!
   lineItems: LineItemCreateManyWithoutOrderInput
 }
 
@@ -891,7 +896,7 @@ input OrderCreateWithoutCustomerInput {
 }
 
 input OrderCreateWithoutLineItemsInput {
-  customer: CustomerCreateOneWithoutOrdersInput
+  customer: CustomerCreateOneWithoutOrdersInput!
 }
 
 type OrderEdge {
@@ -1026,11 +1031,18 @@ input PostCreateInput {
   isPublished: Boolean
   title: String!
   text: String!
+  author: UserCreateOneWithoutPostsInput!
 }
 
-input PostCreateManyInput {
-  create: [PostCreateInput!]
+input PostCreateManyWithoutAuthorInput {
+  create: [PostCreateWithoutAuthorInput!]
   connect: [PostWhereUniqueInput!]
+}
+
+input PostCreateWithoutAuthorInput {
+  isPublished: Boolean
+  title: String!
+  text: String!
 }
 
 type PostEdge {
@@ -1041,20 +1053,22 @@ type PostEdge {
 enum PostOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
   isPublished_ASC
   isPublished_DESC
   title_ASC
   title_DESC
   text_ASC
   text_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type PostPreviousValues {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   isPublished: Boolean!
   title: String!
   text: String!
@@ -1081,13 +1095,33 @@ input PostUpdateInput {
   isPublished: Boolean
   title: String
   text: String
+  author: UserUpdateOneWithoutPostsInput
 }
 
-input PostUpdateManyInput {
-  create: [PostCreateInput!]
+input PostUpdateManyWithoutAuthorInput {
+  create: [PostCreateWithoutAuthorInput!]
   connect: [PostWhereUniqueInput!]
   disconnect: [PostWhereUniqueInput!]
   delete: [PostWhereUniqueInput!]
+  update: [PostUpdateWithoutAuthorInput!]
+  upsert: [PostUpsertWithoutAuthorInput!]
+}
+
+input PostUpdateWithoutAuthorDataInput {
+  isPublished: Boolean
+  title: String
+  text: String
+}
+
+input PostUpdateWithoutAuthorInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateWithoutAuthorDataInput!
+}
+
+input PostUpsertWithoutAuthorInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateWithoutAuthorDataInput!
+  create: PostCreateWithoutAuthorInput!
 }
 
 input PostWhereInput {
@@ -1107,6 +1141,22 @@ input PostWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   isPublished: Boolean
   isPublished_not: Boolean
   title: String
@@ -1137,6 +1187,7 @@ input PostWhereInput {
   text_not_starts_with: String
   text_ends_with: String
   text_not_ends_with: String
+  author: UserWhereInput
 }
 
 input PostWhereUniqueInput {
@@ -1341,7 +1392,18 @@ input UserCreateInput {
   email: String!
   password: String!
   name: String!
-  posts: PostCreateManyInput
+  posts: PostCreateManyWithoutAuthorInput
+}
+
+input UserCreateOneWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutPostsInput {
+  email: String!
+  password: String!
+  name: String!
 }
 
 type UserEdge {
@@ -1392,7 +1454,33 @@ input UserUpdateInput {
   email: String
   password: String
   name: String
-  posts: PostUpdateManyInput
+  posts: PostUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateOneWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  connect: UserWhereUniqueInput
+  disconnect: UserWhereUniqueInput
+  delete: UserWhereUniqueInput
+  update: UserUpdateWithoutPostsInput
+  upsert: UserUpsertWithoutPostsInput
+}
+
+input UserUpdateWithoutPostsDataInput {
+  email: String
+  password: String
+  name: String
+}
+
+input UserUpdateWithoutPostsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutPostsDataInput!
+}
+
+input UserUpsertWithoutPostsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutPostsDataInput!
+  create: UserCreateWithoutPostsInput!
 }
 
 input UserWhereInput {
@@ -1465,6 +1553,20 @@ input UserWhereUniqueInput {
 }
 `
 
+export type UserOrderByInput = 
+  'id_ASC' |
+  'id_DESC' |
+  'email_ASC' |
+  'email_DESC' |
+  'password_ASC' |
+  'password_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC'
+
 export type CustomerOrderByInput = 
   'id_ASC' |
   'id_DESC' |
@@ -1487,20 +1589,6 @@ export type CustomerOrderByInput =
   'createdAt_ASC' |
   'createdAt_DESC'
 
-export type UserOrderByInput = 
-  'id_ASC' |
-  'id_DESC' |
-  'email_ASC' |
-  'email_DESC' |
-  'password_ASC' |
-  'password_DESC' |
-  'name_ASC' |
-  'name_DESC' |
-  'updatedAt_ASC' |
-  'updatedAt_DESC' |
-  'createdAt_ASC' |
-  'createdAt_DESC'
-
 export type OrderOrderByInput = 
   'id_ASC' |
   'id_DESC' |
@@ -1518,6 +1606,20 @@ export type LineItemOrderByInput =
   'updatedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC'
+
+export type PostOrderByInput = 
+  'id_ASC' |
+  'id_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC' |
+  'isPublished_ASC' |
+  'isPublished_DESC' |
+  'title_ASC' |
+  'title_DESC' |
+  'text_ASC' |
+  'text_DESC'
 
 export type IngredientOrderByInput = 
   'id_ASC' |
@@ -1543,20 +1645,6 @@ export type ProductOrderByInput =
   'createdAt_ASC' |
   'createdAt_DESC'
 
-export type PostOrderByInput = 
-  'id_ASC' |
-  'id_DESC' |
-  'isPublished_ASC' |
-  'isPublished_DESC' |
-  'title_ASC' |
-  'title_DESC' |
-  'text_ASC' |
-  'text_DESC' |
-  'updatedAt_ASC' |
-  'updatedAt_DESC' |
-  'createdAt_ASC' |
-  'createdAt_DESC'
-
 export type CategoryOrderByInput = 
   'id_ASC' |
   'id_DESC' |
@@ -1572,14 +1660,9 @@ export type MutationType =
   'UPDATED' |
   'DELETED'
 
-export interface CustomerCreateWithoutOrdersInput {
-  first: String
-  last: String
-  street?: String
-  city?: String
-  state?: String
-  zip?: String
-  cardNum?: String
+export interface OrderCreateOneWithoutLineItemsInput {
+  create?: OrderCreateWithoutLineItemsInput
+  connect?: OrderWhereUniqueInput
 }
 
 export interface PostWhereInput {
@@ -1599,6 +1682,22 @@ export interface PostWhereInput {
   id_not_starts_with?: ID_Input
   id_ends_with?: ID_Input
   id_not_ends_with?: ID_Input
+  createdAt?: DateTime
+  createdAt_not?: DateTime
+  createdAt_in?: DateTime[] | DateTime
+  createdAt_not_in?: DateTime[] | DateTime
+  createdAt_lt?: DateTime
+  createdAt_lte?: DateTime
+  createdAt_gt?: DateTime
+  createdAt_gte?: DateTime
+  updatedAt?: DateTime
+  updatedAt_not?: DateTime
+  updatedAt_in?: DateTime[] | DateTime
+  updatedAt_not_in?: DateTime[] | DateTime
+  updatedAt_lt?: DateTime
+  updatedAt_lte?: DateTime
+  updatedAt_gt?: DateTime
+  updatedAt_gte?: DateTime
   isPublished?: Boolean
   isPublished_not?: Boolean
   title?: String
@@ -1629,11 +1728,437 @@ export interface PostWhereInput {
   text_not_starts_with?: String
   text_ends_with?: String
   text_not_ends_with?: String
+  author?: UserWhereInput
+}
+
+export interface LineItemUpsertWithoutOrderInput {
+  where: LineItemWhereUniqueInput
+  update: LineItemUpdateWithoutOrderDataInput
+  create: LineItemCreateWithoutOrderInput
+}
+
+export interface IngredientUpdateManyInput {
+  create?: IngredientCreateInput[] | IngredientCreateInput
+  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  disconnect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  delete?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+}
+
+export interface PostCreateInput {
+  isPublished?: Boolean
+  title: String
+  text: String
+  author: UserCreateOneWithoutPostsInput
+}
+
+export interface CategoryCreateInput {
+  name: String
+  ingredients?: IngredientCreateManyWithoutCategoryInput
+}
+
+export interface UserCreateOneWithoutPostsInput {
+  create?: UserCreateWithoutPostsInput
+  connect?: UserWhereUniqueInput
+}
+
+export interface LineItemWhereInput {
+  AND?: LineItemWhereInput[] | LineItemWhereInput
+  OR?: LineItemWhereInput[] | LineItemWhereInput
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  purchasePrice?: Int
+  purchasePrice_not?: Int
+  purchasePrice_in?: Int[] | Int
+  purchasePrice_not_in?: Int[] | Int
+  purchasePrice_lt?: Int
+  purchasePrice_lte?: Int
+  purchasePrice_gt?: Int
+  purchasePrice_gte?: Int
+  order?: OrderWhereInput
+  product?: ProductWhereInput
+}
+
+export interface UserCreateWithoutPostsInput {
+  email: String
+  password: String
+  name: String
+}
+
+export interface IngredientWhereInput {
+  AND?: IngredientWhereInput[] | IngredientWhereInput
+  OR?: IngredientWhereInput[] | IngredientWhereInput
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  name?: String
+  name_not?: String
+  name_in?: String[] | String
+  name_not_in?: String[] | String
+  name_lt?: String
+  name_lte?: String
+  name_gt?: String
+  name_gte?: String
+  name_contains?: String
+  name_not_contains?: String
+  name_starts_with?: String
+  name_not_starts_with?: String
+  name_ends_with?: String
+  name_not_ends_with?: String
+  qty?: Int
+  qty_not?: Int
+  qty_in?: Int[] | Int
+  qty_not_in?: Int[] | Int
+  qty_lt?: Int
+  qty_lte?: Int
+  qty_gt?: Int
+  qty_gte?: Int
+  category?: CategoryWhereInput
+}
+
+export interface UserCreateInput {
+  email: String
+  password: String
+  name: String
+  posts?: PostCreateManyWithoutAuthorInput
+}
+
+export interface IngredientSubscriptionWhereInput {
+  AND?: IngredientSubscriptionWhereInput[] | IngredientSubscriptionWhereInput
+  OR?: IngredientSubscriptionWhereInput[] | IngredientSubscriptionWhereInput
+  mutation_in?: MutationType[] | MutationType
+  updatedFields_contains?: String
+  updatedFields_contains_every?: String[] | String
+  updatedFields_contains_some?: String[] | String
+  node?: IngredientWhereInput
+}
+
+export interface PostCreateManyWithoutAuthorInput {
+  create?: PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput
+  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput
+}
+
+export interface LineItemSubscriptionWhereInput {
+  AND?: LineItemSubscriptionWhereInput[] | LineItemSubscriptionWhereInput
+  OR?: LineItemSubscriptionWhereInput[] | LineItemSubscriptionWhereInput
+  mutation_in?: MutationType[] | MutationType
+  updatedFields_contains?: String
+  updatedFields_contains_every?: String[] | String
+  updatedFields_contains_some?: String[] | String
+  node?: LineItemWhereInput
+}
+
+export interface PostCreateWithoutAuthorInput {
+  isPublished?: Boolean
+  title: String
+  text: String
+}
+
+export interface CustomerSubscriptionWhereInput {
+  AND?: CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput
+  OR?: CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput
+  mutation_in?: MutationType[] | MutationType
+  updatedFields_contains?: String
+  updatedFields_contains_every?: String[] | String
+  updatedFields_contains_some?: String[] | String
+  node?: CustomerWhereInput
+}
+
+export interface CustomerCreateInput {
+  first: String
+  last: String
+  street?: String
+  city?: String
+  state?: String
+  zip?: String
+  cardNum?: String
+  orders?: OrderCreateManyWithoutCustomerInput
+}
+
+export interface UserSubscriptionWhereInput {
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput
+  mutation_in?: MutationType[] | MutationType
+  updatedFields_contains?: String
+  updatedFields_contains_every?: String[] | String
+  updatedFields_contains_some?: String[] | String
+  node?: UserWhereInput
+}
+
+export interface OrderCreateManyWithoutCustomerInput {
+  create?: OrderCreateWithoutCustomerInput[] | OrderCreateWithoutCustomerInput
+  connect?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
+}
+
+export interface IngredientUpsertWithoutCategoryInput {
+  where: IngredientWhereUniqueInput
+  update: IngredientUpdateWithoutCategoryDataInput
+  create: IngredientCreateWithoutCategoryInput
+}
+
+export interface OrderCreateWithoutCustomerInput {
+  lineItems?: LineItemCreateManyWithoutOrderInput
+}
+
+export interface PostWhereUniqueInput {
+  id?: ID_Input
+}
+
+export interface LineItemCreateManyWithoutOrderInput {
+  create?: LineItemCreateWithoutOrderInput[] | LineItemCreateWithoutOrderInput
+  connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+}
+
+export interface CustomerWhereUniqueInput {
+  id?: ID_Input
+}
+
+export interface LineItemCreateWithoutOrderInput {
+  purchasePrice: Int
+  product?: ProductCreateOneWithoutLineItemsInput
+}
+
+export interface LineItemWhereUniqueInput {
+  id?: ID_Input
+}
+
+export interface ProductCreateOneWithoutLineItemsInput {
+  create?: ProductCreateWithoutLineItemsInput
+  connect?: ProductWhereUniqueInput
+}
+
+export interface IngredientWhereUniqueInput {
+  id?: ID_Input
+}
+
+export interface ProductCreateWithoutLineItemsInput {
+  price: Int
+  name: String
+  ingredients?: IngredientCreateManyInput
+}
+
+export interface IngredientUpdateWithoutCategoryInput {
+  where: IngredientWhereUniqueInput
+  data: IngredientUpdateWithoutCategoryDataInput
+}
+
+export interface IngredientCreateManyInput {
+  create?: IngredientCreateInput[] | IngredientCreateInput
+  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+}
+
+export interface CategoryUpdateInput {
+  name?: String
+  ingredients?: IngredientUpdateManyWithoutCategoryInput
+}
+
+export interface IngredientCreateInput {
+  name: String
+  qty: Int
+  category: CategoryCreateOneWithoutIngredientsInput
+}
+
+export interface CategoryUpdateWithoutIngredientsDataInput {
+  name?: String
+}
+
+export interface CategoryCreateOneWithoutIngredientsInput {
+  create?: CategoryCreateWithoutIngredientsInput
+  connect?: CategoryWhereUniqueInput
+}
+
+export interface CategoryUpdateOneWithoutIngredientsInput {
+  create?: CategoryCreateWithoutIngredientsInput
+  connect?: CategoryWhereUniqueInput
+  disconnect?: CategoryWhereUniqueInput
+  delete?: CategoryWhereUniqueInput
+  update?: CategoryUpdateWithoutIngredientsInput
+  upsert?: CategoryUpsertWithoutIngredientsInput
+}
+
+export interface CategoryCreateWithoutIngredientsInput {
+  name: String
+}
+
+export interface LineItemUpsertWithoutProductInput {
+  where: LineItemWhereUniqueInput
+  update: LineItemUpdateWithoutProductDataInput
+  create: LineItemCreateWithoutProductInput
+}
+
+export interface OrderCreateInput {
+  customer: CustomerCreateOneWithoutOrdersInput
+  lineItems?: LineItemCreateManyWithoutOrderInput
+}
+
+export interface LineItemUpdateWithoutProductInput {
+  where: LineItemWhereUniqueInput
+  data: LineItemUpdateWithoutProductDataInput
+}
+
+export interface CustomerCreateOneWithoutOrdersInput {
+  create?: CustomerCreateWithoutOrdersInput
+  connect?: CustomerWhereUniqueInput
+}
+
+export interface ProductUpdateInput {
+  price?: Int
+  name?: String
+  lineItems?: LineItemUpdateManyWithoutProductInput
+  ingredients?: IngredientUpdateManyInput
+}
+
+export interface CustomerCreateWithoutOrdersInput {
+  first: String
+  last: String
+  street?: String
+  city?: String
+  state?: String
+  zip?: String
+  cardNum?: String
+}
+
+export interface OrderUpdateWithoutLineItemsDataInput {
+  customer?: CustomerUpdateOneWithoutOrdersInput
+}
+
+export interface LineItemCreateInput {
+  purchasePrice: Int
+  order?: OrderCreateOneWithoutLineItemsInput
+  product?: ProductCreateOneWithoutLineItemsInput
+}
+
+export interface OrderUpdateOneWithoutLineItemsInput {
+  create?: OrderCreateWithoutLineItemsInput
+  connect?: OrderWhereUniqueInput
+  disconnect?: OrderWhereUniqueInput
+  delete?: OrderWhereUniqueInput
+  update?: OrderUpdateWithoutLineItemsInput
+  upsert?: OrderUpsertWithoutLineItemsInput
+}
+
+export interface ProductUpsertWithoutLineItemsInput {
+  where: ProductWhereUniqueInput
+  update: ProductUpdateWithoutLineItemsDataInput
+  create: ProductCreateWithoutLineItemsInput
+}
+
+export interface CustomerUpsertWithoutOrdersInput {
+  where: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutOrdersDataInput
+  create: CustomerCreateWithoutOrdersInput
+}
+
+export interface OrderCreateWithoutLineItemsInput {
+  customer: CustomerCreateOneWithoutOrdersInput
+}
+
+export interface CustomerUpdateWithoutOrdersInput {
+  where: CustomerWhereUniqueInput
+  data: CustomerUpdateWithoutOrdersDataInput
+}
+
+export interface ProductCreateInput {
+  price: Int
+  name: String
+  lineItems?: LineItemCreateManyWithoutProductInput
+  ingredients?: IngredientCreateManyInput
+}
+
+export interface OrderUpdateInput {
+  customer?: CustomerUpdateOneWithoutOrdersInput
+  lineItems?: LineItemUpdateManyWithoutOrderInput
+}
+
+export interface LineItemCreateManyWithoutProductInput {
+  create?: LineItemCreateWithoutProductInput[] | LineItemCreateWithoutProductInput
+  connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+}
+
+export interface OrderWhereInput {
+  AND?: OrderWhereInput[] | OrderWhereInput
+  OR?: OrderWhereInput[] | OrderWhereInput
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  customer?: CustomerWhereInput
+  lineItems_every?: LineItemWhereInput
+  lineItems_some?: LineItemWhereInput
+  lineItems_none?: LineItemWhereInput
 }
 
 export interface LineItemCreateWithoutProductInput {
   purchasePrice: Int
   order?: OrderCreateOneWithoutLineItemsInput
+}
+
+export interface CategoryWhereInput {
+  AND?: CategoryWhereInput[] | CategoryWhereInput
+  OR?: CategoryWhereInput[] | CategoryWhereInput
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  name?: String
+  name_not?: String
+  name_in?: String[] | String
+  name_not_in?: String[] | String
+  name_lt?: String
+  name_lte?: String
+  name_gt?: String
+  name_gte?: String
+  name_contains?: String
+  name_not_contains?: String
+  name_starts_with?: String
+  name_not_starts_with?: String
+  name_ends_with?: String
+  name_not_ends_with?: String
+  ingredients_every?: IngredientWhereInput
+  ingredients_some?: IngredientWhereInput
+  ingredients_none?: IngredientWhereInput
 }
 
 export interface CustomerWhereInput {
@@ -1756,366 +2281,19 @@ export interface CustomerWhereInput {
   orders_none?: OrderWhereInput
 }
 
-export interface CategoryCreateInput {
-  name: String
-  ingredients?: IngredientCreateManyWithoutCategoryInput
-}
-
-export interface LineItemWhereInput {
-  AND?: LineItemWhereInput[] | LineItemWhereInput
-  OR?: LineItemWhereInput[] | LineItemWhereInput
-  id?: ID_Input
-  id_not?: ID_Input
-  id_in?: ID_Input[] | ID_Input
-  id_not_in?: ID_Input[] | ID_Input
-  id_lt?: ID_Input
-  id_lte?: ID_Input
-  id_gt?: ID_Input
-  id_gte?: ID_Input
-  id_contains?: ID_Input
-  id_not_contains?: ID_Input
-  id_starts_with?: ID_Input
-  id_not_starts_with?: ID_Input
-  id_ends_with?: ID_Input
-  id_not_ends_with?: ID_Input
-  purchasePrice?: Int
-  purchasePrice_not?: Int
-  purchasePrice_in?: Int[] | Int
-  purchasePrice_not_in?: Int[] | Int
-  purchasePrice_lt?: Int
-  purchasePrice_lte?: Int
-  purchasePrice_gt?: Int
-  purchasePrice_gte?: Int
-  order?: OrderWhereInput
-  product?: ProductWhereInput
+export interface ProductSubscriptionWhereInput {
+  AND?: ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput
+  OR?: ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput
+  mutation_in?: MutationType[] | MutationType
+  updatedFields_contains?: String
+  updatedFields_contains_every?: String[] | String
+  updatedFields_contains_some?: String[] | String
+  node?: ProductWhereInput
 }
 
 export interface IngredientCreateManyWithoutCategoryInput {
   create?: IngredientCreateWithoutCategoryInput[] | IngredientCreateWithoutCategoryInput
   connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-}
-
-export interface IngredientWhereInput {
-  AND?: IngredientWhereInput[] | IngredientWhereInput
-  OR?: IngredientWhereInput[] | IngredientWhereInput
-  id?: ID_Input
-  id_not?: ID_Input
-  id_in?: ID_Input[] | ID_Input
-  id_not_in?: ID_Input[] | ID_Input
-  id_lt?: ID_Input
-  id_lte?: ID_Input
-  id_gt?: ID_Input
-  id_gte?: ID_Input
-  id_contains?: ID_Input
-  id_not_contains?: ID_Input
-  id_starts_with?: ID_Input
-  id_not_starts_with?: ID_Input
-  id_ends_with?: ID_Input
-  id_not_ends_with?: ID_Input
-  name?: String
-  name_not?: String
-  name_in?: String[] | String
-  name_not_in?: String[] | String
-  name_lt?: String
-  name_lte?: String
-  name_gt?: String
-  name_gte?: String
-  name_contains?: String
-  name_not_contains?: String
-  name_starts_with?: String
-  name_not_starts_with?: String
-  name_ends_with?: String
-  name_not_ends_with?: String
-  qty?: Int
-  qty_not?: Int
-  qty_in?: Int[] | Int
-  qty_not_in?: Int[] | Int
-  qty_lt?: Int
-  qty_lte?: Int
-  qty_gt?: Int
-  qty_gte?: Int
-  category?: CategoryWhereInput
-}
-
-export interface CustomerUpdateOneWithoutOrdersInput {
-  create?: CustomerCreateWithoutOrdersInput
-  connect?: CustomerWhereUniqueInput
-  disconnect?: CustomerWhereUniqueInput
-  delete?: CustomerWhereUniqueInput
-  update?: CustomerUpdateWithoutOrdersInput
-  upsert?: CustomerUpsertWithoutOrdersInput
-}
-
-export interface ProductUpsertWithoutLineItemsInput {
-  where: ProductWhereUniqueInput
-  update: ProductUpdateWithoutLineItemsDataInput
-  create: ProductCreateWithoutLineItemsInput
-}
-
-export interface OrderUpdateInput {
-  customer?: CustomerUpdateOneWithoutOrdersInput
-  lineItems?: LineItemUpdateManyWithoutOrderInput
-}
-
-export interface IngredientCreateWithoutCategoryInput {
-  name: String
-  qty: Int
-}
-
-export interface PostCreateInput {
-  isPublished?: Boolean
-  title: String
-  text: String
-}
-
-export interface CategorySubscriptionWhereInput {
-  AND?: CategorySubscriptionWhereInput[] | CategorySubscriptionWhereInput
-  OR?: CategorySubscriptionWhereInput[] | CategorySubscriptionWhereInput
-  mutation_in?: MutationType[] | MutationType
-  updatedFields_contains?: String
-  updatedFields_contains_every?: String[] | String
-  updatedFields_contains_some?: String[] | String
-  node?: CategoryWhereInput
-}
-
-export interface UserCreateInput {
-  email: String
-  password: String
-  name: String
-  posts?: PostCreateManyInput
-}
-
-export interface IngredientSubscriptionWhereInput {
-  AND?: IngredientSubscriptionWhereInput[] | IngredientSubscriptionWhereInput
-  OR?: IngredientSubscriptionWhereInput[] | IngredientSubscriptionWhereInput
-  mutation_in?: MutationType[] | MutationType
-  updatedFields_contains?: String
-  updatedFields_contains_every?: String[] | String
-  updatedFields_contains_some?: String[] | String
-  node?: IngredientWhereInput
-}
-
-export interface PostCreateManyInput {
-  create?: PostCreateInput[] | PostCreateInput
-  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput
-}
-
-export interface LineItemSubscriptionWhereInput {
-  AND?: LineItemSubscriptionWhereInput[] | LineItemSubscriptionWhereInput
-  OR?: LineItemSubscriptionWhereInput[] | LineItemSubscriptionWhereInput
-  mutation_in?: MutationType[] | MutationType
-  updatedFields_contains?: String
-  updatedFields_contains_every?: String[] | String
-  updatedFields_contains_some?: String[] | String
-  node?: LineItemWhereInput
-}
-
-export interface CustomerCreateInput {
-  first: String
-  last: String
-  street?: String
-  city?: String
-  state?: String
-  zip?: String
-  cardNum?: String
-  orders?: OrderCreateManyWithoutCustomerInput
-}
-
-export interface CustomerSubscriptionWhereInput {
-  AND?: CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput
-  OR?: CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput
-  mutation_in?: MutationType[] | MutationType
-  updatedFields_contains?: String
-  updatedFields_contains_every?: String[] | String
-  updatedFields_contains_some?: String[] | String
-  node?: CustomerWhereInput
-}
-
-export interface OrderCreateManyWithoutCustomerInput {
-  create?: OrderCreateWithoutCustomerInput[] | OrderCreateWithoutCustomerInput
-  connect?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
-}
-
-export interface PostSubscriptionWhereInput {
-  AND?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput
-  OR?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput
-  mutation_in?: MutationType[] | MutationType
-  updatedFields_contains?: String
-  updatedFields_contains_every?: String[] | String
-  updatedFields_contains_some?: String[] | String
-  node?: PostWhereInput
-}
-
-export interface OrderCreateWithoutCustomerInput {
-  lineItems?: LineItemCreateManyWithoutOrderInput
-}
-
-export interface UserWhereUniqueInput {
-  id?: ID_Input
-  email?: String
-}
-
-export interface LineItemCreateManyWithoutOrderInput {
-  create?: LineItemCreateWithoutOrderInput[] | LineItemCreateWithoutOrderInput
-  connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
-}
-
-export interface OrderWhereUniqueInput {
-  id?: ID_Input
-}
-
-export interface LineItemCreateWithoutOrderInput {
-  purchasePrice: Int
-  product?: ProductCreateOneWithoutLineItemsInput
-}
-
-export interface ProductWhereUniqueInput {
-  id?: ID_Input
-}
-
-export interface ProductCreateOneWithoutLineItemsInput {
-  create?: ProductCreateWithoutLineItemsInput
-  connect?: ProductWhereUniqueInput
-}
-
-export interface CategoryWhereUniqueInput {
-  id?: ID_Input
-}
-
-export interface ProductCreateWithoutLineItemsInput {
-  price: Int
-  name: String
-  ingredients?: IngredientCreateManyInput
-}
-
-export interface IngredientUpdateWithoutCategoryDataInput {
-  name?: String
-  qty?: Int
-}
-
-export interface IngredientCreateManyInput {
-  create?: IngredientCreateInput[] | IngredientCreateInput
-  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-}
-
-export interface IngredientUpdateManyWithoutCategoryInput {
-  create?: IngredientCreateWithoutCategoryInput[] | IngredientCreateWithoutCategoryInput
-  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-  disconnect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-  delete?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-  update?: IngredientUpdateWithoutCategoryInput[] | IngredientUpdateWithoutCategoryInput
-  upsert?: IngredientUpsertWithoutCategoryInput[] | IngredientUpsertWithoutCategoryInput
-}
-
-export interface IngredientCreateInput {
-  name: String
-  qty: Int
-  category: CategoryCreateOneWithoutIngredientsInput
-}
-
-export interface CategoryUpsertWithoutIngredientsInput {
-  where: CategoryWhereUniqueInput
-  update: CategoryUpdateWithoutIngredientsDataInput
-  create: CategoryCreateWithoutIngredientsInput
-}
-
-export interface CategoryCreateOneWithoutIngredientsInput {
-  create?: CategoryCreateWithoutIngredientsInput
-  connect?: CategoryWhereUniqueInput
-}
-
-export interface CategoryUpdateWithoutIngredientsInput {
-  where: CategoryWhereUniqueInput
-  data: CategoryUpdateWithoutIngredientsDataInput
-}
-
-export interface CategoryCreateWithoutIngredientsInput {
-  name: String
-}
-
-export interface IngredientUpdateInput {
-  name?: String
-  qty?: Int
-  category?: CategoryUpdateOneWithoutIngredientsInput
-}
-
-export interface OrderCreateInput {
-  customer?: CustomerCreateOneWithoutOrdersInput
-  lineItems?: LineItemCreateManyWithoutOrderInput
-}
-
-export interface LineItemUpdateWithoutProductDataInput {
-  purchasePrice?: Int
-  order?: OrderUpdateOneWithoutLineItemsInput
-}
-
-export interface CustomerCreateOneWithoutOrdersInput {
-  create?: CustomerCreateWithoutOrdersInput
-  connect?: CustomerWhereUniqueInput
-}
-
-export interface LineItemUpdateManyWithoutProductInput {
-  create?: LineItemCreateWithoutProductInput[] | LineItemCreateWithoutProductInput
-  connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
-  disconnect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
-  delete?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
-  update?: LineItemUpdateWithoutProductInput[] | LineItemUpdateWithoutProductInput
-  upsert?: LineItemUpsertWithoutProductInput[] | LineItemUpsertWithoutProductInput
-}
-
-export interface OrderUpsertWithoutCustomerInput {
-  where: OrderWhereUniqueInput
-  update: OrderUpdateWithoutCustomerDataInput
-  create: OrderCreateWithoutCustomerInput
-}
-
-export interface OrderUpsertWithoutLineItemsInput {
-  where: OrderWhereUniqueInput
-  update: OrderUpdateWithoutLineItemsDataInput
-  create: OrderCreateWithoutLineItemsInput
-}
-
-export interface LineItemCreateInput {
-  purchasePrice: Int
-  order?: OrderCreateOneWithoutLineItemsInput
-  product?: ProductCreateOneWithoutLineItemsInput
-}
-
-export interface OrderUpdateWithoutLineItemsInput {
-  where: OrderWhereUniqueInput
-  data: OrderUpdateWithoutLineItemsDataInput
-}
-
-export interface OrderCreateOneWithoutLineItemsInput {
-  create?: OrderCreateWithoutLineItemsInput
-  connect?: OrderWhereUniqueInput
-}
-
-export interface LineItemUpdateInput {
-  purchasePrice?: Int
-  order?: OrderUpdateOneWithoutLineItemsInput
-  product?: ProductUpdateOneWithoutLineItemsInput
-}
-
-export interface OrderCreateWithoutLineItemsInput {
-  customer?: CustomerCreateOneWithoutOrdersInput
-}
-
-export interface CustomerUpdateWithoutOrdersDataInput {
-  first?: String
-  last?: String
-  street?: String
-  city?: String
-  state?: String
-  zip?: String
-  cardNum?: String
-}
-
-export interface ProductCreateInput {
-  price: Int
-  name: String
-  lineItems?: LineItemCreateManyWithoutProductInput
-  ingredients?: IngredientCreateManyInput
 }
 
 export interface UserWhereInput {
@@ -2182,52 +2360,271 @@ export interface UserWhereInput {
   posts_none?: PostWhereInput
 }
 
-export interface LineItemCreateManyWithoutProductInput {
+export interface IngredientCreateWithoutCategoryInput {
+  name: String
+  qty: Int
+}
+
+export interface IngredientUpdateWithoutCategoryDataInput {
+  name?: String
+  qty?: Int
+}
+
+export interface PostUpdateInput {
+  isPublished?: Boolean
+  title?: String
+  text?: String
+  author?: UserUpdateOneWithoutPostsInput
+}
+
+export interface OrderWhereUniqueInput {
+  id?: ID_Input
+}
+
+export interface UserUpdateOneWithoutPostsInput {
+  create?: UserCreateWithoutPostsInput
+  connect?: UserWhereUniqueInput
+  disconnect?: UserWhereUniqueInput
+  delete?: UserWhereUniqueInput
+  update?: UserUpdateWithoutPostsInput
+  upsert?: UserUpsertWithoutPostsInput
+}
+
+export interface CategoryWhereUniqueInput {
+  id?: ID_Input
+}
+
+export interface UserUpdateWithoutPostsInput {
+  where: UserWhereUniqueInput
+  data: UserUpdateWithoutPostsDataInput
+}
+
+export interface CategoryUpsertWithoutIngredientsInput {
+  where: CategoryWhereUniqueInput
+  update: CategoryUpdateWithoutIngredientsDataInput
+  create: CategoryCreateWithoutIngredientsInput
+}
+
+export interface UserUpdateWithoutPostsDataInput {
+  email?: String
+  password?: String
+  name?: String
+}
+
+export interface IngredientUpdateInput {
+  name?: String
+  qty?: Int
+  category?: CategoryUpdateOneWithoutIngredientsInput
+}
+
+export interface UserUpsertWithoutPostsInput {
+  where: UserWhereUniqueInput
+  update: UserUpdateWithoutPostsDataInput
+  create: UserCreateWithoutPostsInput
+}
+
+export interface LineItemUpdateManyWithoutProductInput {
   create?: LineItemCreateWithoutProductInput[] | LineItemCreateWithoutProductInput
   connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+  disconnect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+  delete?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+  update?: LineItemUpdateWithoutProductInput[] | LineItemUpdateWithoutProductInput
+  upsert?: LineItemUpsertWithoutProductInput[] | LineItemUpsertWithoutProductInput
 }
 
-export interface ProductSubscriptionWhereInput {
-  AND?: ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput
-  OR?: ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput
+export interface UserUpdateInput {
+  email?: String
+  password?: String
+  name?: String
+  posts?: PostUpdateManyWithoutAuthorInput
+}
+
+export interface OrderUpdateWithoutLineItemsInput {
+  where: OrderWhereUniqueInput
+  data: OrderUpdateWithoutLineItemsDataInput
+}
+
+export interface PostUpdateManyWithoutAuthorInput {
+  create?: PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput
+  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput
+  disconnect?: PostWhereUniqueInput[] | PostWhereUniqueInput
+  delete?: PostWhereUniqueInput[] | PostWhereUniqueInput
+  update?: PostUpdateWithoutAuthorInput[] | PostUpdateWithoutAuthorInput
+  upsert?: PostUpsertWithoutAuthorInput[] | PostUpsertWithoutAuthorInput
+}
+
+export interface CustomerUpdateWithoutOrdersDataInput {
+  first?: String
+  last?: String
+  street?: String
+  city?: String
+  state?: String
+  zip?: String
+  cardNum?: String
+}
+
+export interface PostUpdateWithoutAuthorInput {
+  where: PostWhereUniqueInput
+  data: PostUpdateWithoutAuthorDataInput
+}
+
+export interface OrderUpsertWithoutCustomerInput {
+  where: OrderWhereUniqueInput
+  update: OrderUpdateWithoutCustomerDataInput
+  create: OrderCreateWithoutCustomerInput
+}
+
+export interface PostUpdateWithoutAuthorDataInput {
+  isPublished?: Boolean
+  title?: String
+  text?: String
+}
+
+export interface CategorySubscriptionWhereInput {
+  AND?: CategorySubscriptionWhereInput[] | CategorySubscriptionWhereInput
+  OR?: CategorySubscriptionWhereInput[] | CategorySubscriptionWhereInput
   mutation_in?: MutationType[] | MutationType
   updatedFields_contains?: String
   updatedFields_contains_every?: String[] | String
   updatedFields_contains_some?: String[] | String
-  node?: ProductWhereInput
+  node?: CategoryWhereInput
 }
 
-export interface OrderWhereInput {
-  AND?: OrderWhereInput[] | OrderWhereInput
-  OR?: OrderWhereInput[] | OrderWhereInput
+export interface PostUpsertWithoutAuthorInput {
+  where: PostWhereUniqueInput
+  update: PostUpdateWithoutAuthorDataInput
+  create: PostCreateWithoutAuthorInput
+}
+
+export interface PostSubscriptionWhereInput {
+  AND?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput
+  OR?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput
+  mutation_in?: MutationType[] | MutationType
+  updatedFields_contains?: String
+  updatedFields_contains_every?: String[] | String
+  updatedFields_contains_some?: String[] | String
+  node?: PostWhereInput
+}
+
+export interface CustomerUpdateInput {
+  first?: String
+  last?: String
+  street?: String
+  city?: String
+  state?: String
+  zip?: String
+  cardNum?: String
+  orders?: OrderUpdateManyWithoutCustomerInput
+}
+
+export interface ProductWhereUniqueInput {
   id?: ID_Input
-  id_not?: ID_Input
-  id_in?: ID_Input[] | ID_Input
-  id_not_in?: ID_Input[] | ID_Input
-  id_lt?: ID_Input
-  id_lte?: ID_Input
-  id_gt?: ID_Input
-  id_gte?: ID_Input
-  id_contains?: ID_Input
-  id_not_contains?: ID_Input
-  id_starts_with?: ID_Input
-  id_not_starts_with?: ID_Input
-  id_ends_with?: ID_Input
-  id_not_ends_with?: ID_Input
-  customer?: CustomerWhereInput
-  lineItems_every?: LineItemWhereInput
-  lineItems_some?: LineItemWhereInput
-  lineItems_none?: LineItemWhereInput
 }
 
-export interface UserSubscriptionWhereInput {
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput
+export interface OrderUpdateManyWithoutCustomerInput {
+  create?: OrderCreateWithoutCustomerInput[] | OrderCreateWithoutCustomerInput
+  connect?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
+  disconnect?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
+  delete?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
+  update?: OrderUpdateWithoutCustomerInput[] | OrderUpdateWithoutCustomerInput
+  upsert?: OrderUpsertWithoutCustomerInput[] | OrderUpsertWithoutCustomerInput
+}
+
+export interface CategoryUpdateWithoutIngredientsInput {
+  where: CategoryWhereUniqueInput
+  data: CategoryUpdateWithoutIngredientsDataInput
+}
+
+export interface OrderUpdateWithoutCustomerInput {
+  where: OrderWhereUniqueInput
+  data: OrderUpdateWithoutCustomerDataInput
+}
+
+export interface OrderUpsertWithoutLineItemsInput {
+  where: OrderWhereUniqueInput
+  update: OrderUpdateWithoutLineItemsDataInput
+  create: OrderCreateWithoutLineItemsInput
+}
+
+export interface OrderUpdateWithoutCustomerDataInput {
+  lineItems?: LineItemUpdateManyWithoutOrderInput
+}
+
+export interface CustomerUpdateOneWithoutOrdersInput {
+  create?: CustomerCreateWithoutOrdersInput
+  connect?: CustomerWhereUniqueInput
+  disconnect?: CustomerWhereUniqueInput
+  delete?: CustomerWhereUniqueInput
+  update?: CustomerUpdateWithoutOrdersInput
+  upsert?: CustomerUpsertWithoutOrdersInput
+}
+
+export interface LineItemUpdateManyWithoutOrderInput {
+  create?: LineItemCreateWithoutOrderInput[] | LineItemCreateWithoutOrderInput
+  connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+  disconnect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+  delete?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
+  update?: LineItemUpdateWithoutOrderInput[] | LineItemUpdateWithoutOrderInput
+  upsert?: LineItemUpsertWithoutOrderInput[] | LineItemUpsertWithoutOrderInput
+}
+
+export interface OrderSubscriptionWhereInput {
+  AND?: OrderSubscriptionWhereInput[] | OrderSubscriptionWhereInput
+  OR?: OrderSubscriptionWhereInput[] | OrderSubscriptionWhereInput
   mutation_in?: MutationType[] | MutationType
   updatedFields_contains?: String
   updatedFields_contains_every?: String[] | String
   updatedFields_contains_some?: String[] | String
-  node?: UserWhereInput
+  node?: OrderWhereInput
+}
+
+export interface LineItemUpdateWithoutOrderInput {
+  where: LineItemWhereUniqueInput
+  data: LineItemUpdateWithoutOrderDataInput
+}
+
+export interface IngredientUpdateManyWithoutCategoryInput {
+  create?: IngredientCreateWithoutCategoryInput[] | IngredientCreateWithoutCategoryInput
+  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  disconnect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  delete?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  update?: IngredientUpdateWithoutCategoryInput[] | IngredientUpdateWithoutCategoryInput
+  upsert?: IngredientUpsertWithoutCategoryInput[] | IngredientUpsertWithoutCategoryInput
+}
+
+export interface ProductUpdateWithoutLineItemsDataInput {
+  price?: Int
+  name?: String
+  ingredients?: IngredientUpdateManyInput
+}
+
+export interface ProductUpdateWithoutLineItemsInput {
+  where: ProductWhereUniqueInput
+  data: ProductUpdateWithoutLineItemsDataInput
+}
+
+export interface ProductUpdateOneWithoutLineItemsInput {
+  create?: ProductCreateWithoutLineItemsInput
+  connect?: ProductWhereUniqueInput
+  disconnect?: ProductWhereUniqueInput
+  delete?: ProductWhereUniqueInput
+  update?: ProductUpdateWithoutLineItemsInput
+  upsert?: ProductUpsertWithoutLineItemsInput
+}
+
+export interface LineItemUpdateWithoutOrderDataInput {
+  purchasePrice?: Int
+  product?: ProductUpdateOneWithoutLineItemsInput
+}
+
+export interface LineItemUpdateWithoutProductDataInput {
+  purchasePrice?: Int
+  order?: OrderUpdateOneWithoutLineItemsInput
+}
+
+export interface UserWhereUniqueInput {
+  id?: ID_Input
+  email?: String
 }
 
 export interface ProductWhereInput {
@@ -2277,238 +2674,10 @@ export interface ProductWhereInput {
   ingredients_none?: IngredientWhereInput
 }
 
-export interface CustomerWhereUniqueInput {
-  id?: ID_Input
-}
-
-export interface CategoryWhereInput {
-  AND?: CategoryWhereInput[] | CategoryWhereInput
-  OR?: CategoryWhereInput[] | CategoryWhereInput
-  id?: ID_Input
-  id_not?: ID_Input
-  id_in?: ID_Input[] | ID_Input
-  id_not_in?: ID_Input[] | ID_Input
-  id_lt?: ID_Input
-  id_lte?: ID_Input
-  id_gt?: ID_Input
-  id_gte?: ID_Input
-  id_contains?: ID_Input
-  id_not_contains?: ID_Input
-  id_starts_with?: ID_Input
-  id_not_starts_with?: ID_Input
-  id_ends_with?: ID_Input
-  id_not_ends_with?: ID_Input
-  name?: String
-  name_not?: String
-  name_in?: String[] | String
-  name_not_in?: String[] | String
-  name_lt?: String
-  name_lte?: String
-  name_gt?: String
-  name_gte?: String
-  name_contains?: String
-  name_not_contains?: String
-  name_starts_with?: String
-  name_not_starts_with?: String
-  name_ends_with?: String
-  name_not_ends_with?: String
-  ingredients_every?: IngredientWhereInput
-  ingredients_some?: IngredientWhereInput
-  ingredients_none?: IngredientWhereInput
-}
-
-export interface IngredientWhereUniqueInput {
-  id?: ID_Input
-}
-
-export interface LineItemUpsertWithoutOrderInput {
-  where: LineItemWhereUniqueInput
-  update: LineItemUpdateWithoutOrderDataInput
-  create: LineItemCreateWithoutOrderInput
-}
-
-export interface IngredientUpdateWithoutCategoryInput {
-  where: IngredientWhereUniqueInput
-  data: IngredientUpdateWithoutCategoryDataInput
-}
-
-export interface PostUpdateInput {
-  isPublished?: Boolean
-  title?: String
-  text?: String
-}
-
-export interface CategoryUpdateWithoutIngredientsDataInput {
-  name?: String
-}
-
-export interface UserUpdateInput {
-  email?: String
-  password?: String
-  name?: String
-  posts?: PostUpdateManyInput
-}
-
-export interface LineItemUpsertWithoutProductInput {
-  where: LineItemWhereUniqueInput
-  update: LineItemUpdateWithoutProductDataInput
-  create: LineItemCreateWithoutProductInput
-}
-
-export interface PostUpdateManyInput {
-  create?: PostCreateInput[] | PostCreateInput
-  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput
-  disconnect?: PostWhereUniqueInput[] | PostWhereUniqueInput
-  delete?: PostWhereUniqueInput[] | PostWhereUniqueInput
-}
-
-export interface ProductUpdateInput {
-  price?: Int
-  name?: String
-  lineItems?: LineItemUpdateManyWithoutProductInput
-  ingredients?: IngredientUpdateManyInput
-}
-
-export interface CustomerUpdateInput {
-  first?: String
-  last?: String
-  street?: String
-  city?: String
-  state?: String
-  zip?: String
-  cardNum?: String
-  orders?: OrderUpdateManyWithoutCustomerInput
-}
-
-export interface OrderUpdateOneWithoutLineItemsInput {
-  create?: OrderCreateWithoutLineItemsInput
-  connect?: OrderWhereUniqueInput
-  disconnect?: OrderWhereUniqueInput
-  delete?: OrderWhereUniqueInput
-  update?: OrderUpdateWithoutLineItemsInput
-  upsert?: OrderUpsertWithoutLineItemsInput
-}
-
-export interface OrderUpdateManyWithoutCustomerInput {
-  create?: OrderCreateWithoutCustomerInput[] | OrderCreateWithoutCustomerInput
-  connect?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
-  disconnect?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
-  delete?: OrderWhereUniqueInput[] | OrderWhereUniqueInput
-  update?: OrderUpdateWithoutCustomerInput[] | OrderUpdateWithoutCustomerInput
-  upsert?: OrderUpsertWithoutCustomerInput[] | OrderUpsertWithoutCustomerInput
-}
-
-export interface CustomerUpdateWithoutOrdersInput {
-  where: CustomerWhereUniqueInput
-  data: CustomerUpdateWithoutOrdersDataInput
-}
-
-export interface OrderUpdateWithoutCustomerInput {
-  where: OrderWhereUniqueInput
-  data: OrderUpdateWithoutCustomerDataInput
-}
-
-export interface OrderSubscriptionWhereInput {
-  AND?: OrderSubscriptionWhereInput[] | OrderSubscriptionWhereInput
-  OR?: OrderSubscriptionWhereInput[] | OrderSubscriptionWhereInput
-  mutation_in?: MutationType[] | MutationType
-  updatedFields_contains?: String
-  updatedFields_contains_every?: String[] | String
-  updatedFields_contains_some?: String[] | String
-  node?: OrderWhereInput
-}
-
-export interface OrderUpdateWithoutCustomerDataInput {
-  lineItems?: LineItemUpdateManyWithoutOrderInput
-}
-
-export interface LineItemWhereUniqueInput {
-  id?: ID_Input
-}
-
-export interface LineItemUpdateManyWithoutOrderInput {
-  create?: LineItemCreateWithoutOrderInput[] | LineItemCreateWithoutOrderInput
-  connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
-  disconnect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
-  delete?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
-  update?: LineItemUpdateWithoutOrderInput[] | LineItemUpdateWithoutOrderInput
-  upsert?: LineItemUpsertWithoutOrderInput[] | LineItemUpsertWithoutOrderInput
-}
-
-export interface CategoryUpdateInput {
-  name?: String
-  ingredients?: IngredientUpdateManyWithoutCategoryInput
-}
-
-export interface LineItemUpdateWithoutOrderInput {
-  where: LineItemWhereUniqueInput
-  data: LineItemUpdateWithoutOrderDataInput
-}
-
-export interface LineItemUpdateWithoutProductInput {
-  where: LineItemWhereUniqueInput
-  data: LineItemUpdateWithoutProductDataInput
-}
-
-export interface LineItemUpdateWithoutOrderDataInput {
+export interface LineItemUpdateInput {
   purchasePrice?: Int
+  order?: OrderUpdateOneWithoutLineItemsInput
   product?: ProductUpdateOneWithoutLineItemsInput
-}
-
-export interface CustomerUpsertWithoutOrdersInput {
-  where: CustomerWhereUniqueInput
-  update: CustomerUpdateWithoutOrdersDataInput
-  create: CustomerCreateWithoutOrdersInput
-}
-
-export interface PostWhereUniqueInput {
-  id?: ID_Input
-}
-
-export interface IngredientUpdateManyInput {
-  create?: IngredientCreateInput[] | IngredientCreateInput
-  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-  disconnect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-  delete?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-}
-
-export interface ProductUpdateWithoutLineItemsDataInput {
-  price?: Int
-  name?: String
-  ingredients?: IngredientUpdateManyInput
-}
-
-export interface ProductUpdateWithoutLineItemsInput {
-  where: ProductWhereUniqueInput
-  data: ProductUpdateWithoutLineItemsDataInput
-}
-
-export interface ProductUpdateOneWithoutLineItemsInput {
-  create?: ProductCreateWithoutLineItemsInput
-  connect?: ProductWhereUniqueInput
-  disconnect?: ProductWhereUniqueInput
-  delete?: ProductWhereUniqueInput
-  update?: ProductUpdateWithoutLineItemsInput
-  upsert?: ProductUpsertWithoutLineItemsInput
-}
-
-export interface IngredientUpsertWithoutCategoryInput {
-  where: IngredientWhereUniqueInput
-  update: IngredientUpdateWithoutCategoryDataInput
-  create: IngredientCreateWithoutCategoryInput
-}
-
-export interface OrderUpdateWithoutLineItemsDataInput {
-  customer?: CustomerUpdateOneWithoutOrdersInput
-}
-
-export interface CategoryUpdateOneWithoutIngredientsInput {
-  create?: CategoryCreateWithoutIngredientsInput
-  connect?: CategoryWhereUniqueInput
-  disconnect?: CategoryWhereUniqueInput
-  delete?: CategoryWhereUniqueInput
-  update?: CategoryUpdateWithoutIngredientsInput
-  upsert?: CategoryUpsertWithoutIngredientsInput
 }
 
 export interface Node {
@@ -2520,8 +2689,27 @@ export interface CategoryPreviousValues {
   name: String
 }
 
-export interface BatchPayload {
-  count: Long
+export interface PostConnection {
+  pageInfo: PageInfo
+  edges: PostEdge[]
+  aggregate: AggregatePost
+}
+
+export interface Post extends Node {
+  id: ID_Output
+  createdAt: DateTime
+  updatedAt: DateTime
+  isPublished: Boolean
+  title: String
+  text: String
+  author: User
+}
+
+export interface CategorySubscriptionPayload {
+  mutation: MutationType
+  node?: Category
+  updatedFields?: String[]
+  previousValues?: CategoryPreviousValues
 }
 
 export interface User extends Node {
@@ -2530,6 +2718,25 @@ export interface User extends Node {
   password: String
   name: String
   posts?: Post[]
+}
+
+export interface AggregateCategory {
+  count: Int
+}
+
+export interface CategoryConnection {
+  pageInfo: PageInfo
+  edges: CategoryEdge[]
+  aggregate: AggregateCategory
+}
+
+export interface BatchPayload {
+  count: Long
+}
+
+export interface IngredientEdge {
+  node: Ingredient
+  cursor: String
 }
 
 export interface Customer extends Node {
@@ -2544,53 +2751,30 @@ export interface Customer extends Node {
   orders?: Order[]
 }
 
-export interface AggregateCategory {
+export interface AggregateProduct {
   count: Int
 }
 
-export interface CategorySubscriptionPayload {
-  mutation: MutationType
-  node?: Category
-  updatedFields?: String[]
-  previousValues?: CategoryPreviousValues
-}
-
-export interface IngredientSubscriptionPayload {
-  mutation: MutationType
-  node?: Ingredient
-  updatedFields?: String[]
-  previousValues?: IngredientPreviousValues
-}
-
-export interface CategoryEdge {
-  node: Category
-  cursor: String
-}
-
-export interface CategoryConnection {
-  pageInfo: PageInfo
-  edges: CategoryEdge[]
-  aggregate: AggregateCategory
-}
-
-export interface AggregateIngredient {
-  count: Int
-}
-
-export interface IngredientConnection {
-  pageInfo: PageInfo
-  edges: IngredientEdge[]
-  aggregate: AggregateIngredient
-}
-
-export interface Order extends Node {
+export interface Category extends Node {
   id: ID_Output
-  customer?: Customer
-  lineItems?: LineItem[]
+  name: String
+  ingredients?: Ingredient[]
 }
 
-export interface ProductEdge {
-  node: Product
+export interface ProductConnection {
+  pageInfo: PageInfo
+  edges: ProductEdge[]
+  aggregate: AggregateProduct
+}
+
+export interface IngredientPreviousValues {
+  id: ID_Output
+  name: String
+  qty: Int
+}
+
+export interface LineItemEdge {
+  node: LineItem
   cursor: String
 }
 
@@ -2601,31 +2785,34 @@ export interface PostSubscriptionPayload {
   previousValues?: PostPreviousValues
 }
 
-export interface AggregateLineItem {
+export interface AggregateOrder {
   count: Int
 }
 
 export interface PostPreviousValues {
   id: ID_Output
+  createdAt: DateTime
+  updatedAt: DateTime
   isPublished: Boolean
   title: String
   text: String
 }
 
-export interface LineItemConnection {
+export interface OrderConnection {
   pageInfo: PageInfo
-  edges: LineItemEdge[]
-  aggregate: AggregateLineItem
+  edges: OrderEdge[]
+  aggregate: AggregateOrder
 }
 
-export interface IngredientPreviousValues {
+export interface Ingredient extends Node {
   id: ID_Output
   name: String
+  category: Category
   qty: Int
 }
 
-export interface OrderEdge {
-  node: Order
+export interface CustomerEdge {
+  node: Customer
   cursor: String
 }
 
@@ -2636,7 +2823,7 @@ export interface UserSubscriptionPayload {
   previousValues?: UserPreviousValues
 }
 
-export interface AggregateCustomer {
+export interface AggregateUser {
   count: Int
 }
 
@@ -2647,20 +2834,22 @@ export interface UserPreviousValues {
   name: String
 }
 
-export interface CustomerConnection {
+export interface UserConnection {
   pageInfo: PageInfo
-  edges: CustomerEdge[]
-  aggregate: AggregateCustomer
+  edges: UserEdge[]
+  aggregate: AggregateUser
 }
 
-export interface Category extends Node {
+export interface Product extends Node {
   id: ID_Output
+  lineItems?: LineItem[]
+  price: Int
   name: String
   ingredients?: Ingredient[]
 }
 
-export interface UserEdge {
-  node: User
+export interface PostEdge {
+  node: Post
   cursor: String
 }
 
@@ -2671,8 +2860,9 @@ export interface CustomerSubscriptionPayload {
   previousValues?: CustomerPreviousValues
 }
 
-export interface AggregatePost {
-  count: Int
+export interface CategoryEdge {
+  node: Category
+  cursor: String
 }
 
 export interface CustomerPreviousValues {
@@ -2686,23 +2876,21 @@ export interface CustomerPreviousValues {
   cardNum?: String
 }
 
-export interface PageInfo {
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
-  startCursor?: String
-  endCursor?: String
+export interface IngredientConnection {
+  pageInfo: PageInfo
+  edges: IngredientEdge[]
+  aggregate: AggregateIngredient
 }
 
-export interface Ingredient extends Node {
+export interface LineItem extends Node {
   id: ID_Output
-  name: String
-  category: Category
-  qty: Int
+  order?: Order
+  product?: Product
+  purchasePrice: Int
 }
 
-export interface IngredientEdge {
-  node: Ingredient
-  cursor: String
+export interface AggregateLineItem {
+  count: Int
 }
 
 export interface OrderSubscriptionPayload {
@@ -2712,30 +2900,30 @@ export interface OrderSubscriptionPayload {
   previousValues?: OrderPreviousValues
 }
 
-export interface ProductConnection {
-  pageInfo: PageInfo
-  edges: ProductEdge[]
-  aggregate: AggregateProduct
+export interface OrderEdge {
+  node: Order
+  cursor: String
 }
 
 export interface OrderPreviousValues {
   id: ID_Output
 }
 
-export interface AggregateOrder {
+export interface CustomerConnection {
+  pageInfo: PageInfo
+  edges: CustomerEdge[]
+  aggregate: AggregateCustomer
+}
+
+export interface IngredientSubscriptionPayload {
+  mutation: MutationType
+  node?: Ingredient
+  updatedFields?: String[]
+  previousValues?: IngredientPreviousValues
+}
+
+export interface AggregatePost {
   count: Int
-}
-
-export interface Post extends Node {
-  id: ID_Output
-  isPublished: Boolean
-  title: String
-  text: String
-}
-
-export interface CustomerEdge {
-  node: Customer
-  cursor: String
 }
 
 export interface LineItemSubscriptionPayload {
@@ -2745,33 +2933,14 @@ export interface LineItemSubscriptionPayload {
   previousValues?: LineItemPreviousValues
 }
 
-export interface UserConnection {
+export interface AggregateIngredient {
+  count: Int
+}
+
+export interface LineItemConnection {
   pageInfo: PageInfo
-  edges: UserEdge[]
-  aggregate: AggregateUser
-}
-
-export interface LineItemPreviousValues {
-  id: ID_Output
-  purchasePrice: Int
-}
-
-export interface PostConnection {
-  pageInfo: PageInfo
-  edges: PostEdge[]
-  aggregate: AggregatePost
-}
-
-export interface LineItemEdge {
-  node: LineItem
-  cursor: String
-}
-
-export interface LineItem extends Node {
-  id: ID_Output
-  order?: Order
-  product?: Product
-  purchasePrice: Int
+  edges: LineItemEdge[]
+  aggregate: AggregateLineItem
 }
 
 export interface ProductPreviousValues {
@@ -2787,39 +2956,42 @@ export interface ProductSubscriptionPayload {
   previousValues?: ProductPreviousValues
 }
 
-export interface Product extends Node {
+export interface Order extends Node {
   id: ID_Output
+  customer: Customer
   lineItems?: LineItem[]
-  price: Int
-  name: String
-  ingredients?: Ingredient[]
 }
 
-export interface OrderConnection {
-  pageInfo: PageInfo
-  edges: OrderEdge[]
-  aggregate: AggregateOrder
+export interface LineItemPreviousValues {
+  id: ID_Output
+  purchasePrice: Int
 }
 
-export interface AggregateProduct {
+export interface AggregateCustomer {
   count: Int
 }
 
-export interface PostEdge {
-  node: Post
+export interface ProductEdge {
+  node: Product
   cursor: String
 }
 
-export interface AggregateUser {
-  count: Int
+export interface PageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor?: String
+  endCursor?: String
+}
+
+export interface UserEdge {
+  node: User
+  cursor: String
 }
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string
-
-export type Long = string
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
@@ -2831,6 +3003,10 @@ export type ID_Output = string
 The `Boolean` scalar type represents `true` or `false`.
 */
 export type Boolean = boolean
+
+export type Long = string
+
+export type DateTime = string
 
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
