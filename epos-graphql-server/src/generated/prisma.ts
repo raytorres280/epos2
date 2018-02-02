@@ -25,6 +25,7 @@ type Customer implements Node {
   zip: String
   cardNum: String
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order!]
+  createdAt: DateTime!
 }
 
 type Ingredient implements Node {
@@ -295,10 +296,10 @@ enum CustomerOrderByInput {
   zip_DESC
   cardNum_ASC
   cardNum_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CustomerPreviousValues {
@@ -310,6 +311,7 @@ type CustomerPreviousValues {
   state: String
   zip: String
   cardNum: String
+  createdAt: DateTime!
 }
 
 type CustomerSubscriptionPayload {
@@ -485,6 +487,14 @@ input CustomerWhereInput {
   cardNum_not_starts_with: String
   cardNum_ends_with: String
   cardNum_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   orders_every: OrderWhereInput
   orders_some: OrderWhereInput
   orders_none: OrderWhereInput
@@ -1584,10 +1594,10 @@ export type CustomerOrderByInput =
   'zip_DESC' |
   'cardNum_ASC' |
   'cardNum_DESC' |
-  'updatedAt_ASC' |
-  'updatedAt_DESC' |
   'createdAt_ASC' |
-  'createdAt_DESC'
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type OrderOrderByInput = 
   'id_ASC' |
@@ -2276,6 +2286,14 @@ export interface CustomerWhereInput {
   cardNum_not_starts_with?: String
   cardNum_ends_with?: String
   cardNum_not_ends_with?: String
+  createdAt?: DateTime
+  createdAt_not?: DateTime
+  createdAt_in?: DateTime[] | DateTime
+  createdAt_not_in?: DateTime[] | DateTime
+  createdAt_lt?: DateTime
+  createdAt_lte?: DateTime
+  createdAt_gt?: DateTime
+  createdAt_gte?: DateTime
   orders_every?: OrderWhereInput
   orders_some?: OrderWhereInput
   orders_none?: OrderWhereInput
@@ -2749,6 +2767,7 @@ export interface Customer extends Node {
   zip?: String
   cardNum?: String
   orders?: Order[]
+  createdAt: DateTime
 }
 
 export interface AggregateProduct {
@@ -2874,6 +2893,7 @@ export interface CustomerPreviousValues {
   state?: String
   zip?: String
   cardNum?: String
+  createdAt: DateTime
 }
 
 export interface IngredientConnection {

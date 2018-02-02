@@ -11,8 +11,8 @@ class Customers extends React.Component<any, any> {
     this.state = {
       loading: false,
       loadMore: false,
-      columns: [],
-      customers: []
+      columns: [{}],
+      customers: [{}]
     };
   }
 
@@ -31,9 +31,9 @@ class Customers extends React.Component<any, any> {
     return (
       <Table
         columns={this.state.columns}
-        // expandedRowRender={record => (
-        //   <p style={{ margin: 0 }}>{record.first}</p>
-        // )}
+        expandedRowRender={() => (
+          <p style={{ margin: 0 }}>hello world</p>
+        )}
         dataSource={this.state.customers}
       />
     );

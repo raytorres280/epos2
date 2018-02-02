@@ -26,6 +26,7 @@ type Customer {
   zip: String
   cardNum: String
   orders: [Order!]!
+  createdAt: DateTime!
 }
 type Order {
   id: ID! @unique

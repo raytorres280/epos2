@@ -26,20 +26,41 @@ export default class SideBar extends React.Component<any, any> {
           <Menu.Item key="1">
             <Link to="/new-order">
               <div>
-              <Icon style={{ fontSize: 25 }} type="desktop" />
-                <span>dashboard</span>
+              <Icon style={{ fontSize: 25 }} type="upload" />
+                <span>new order</span>
               </div>
             </Link>
           </Menu.Item>
+          
           <Menu.Item key="2">
-            <Icon style={{ fontSize: 25 }} type="inbox" />
-            <span>Customers</span>
+            <Link to="/orders">
+              <div>
+                <Icon style={{ fontSize: 25 }} type="inbox" />
+                <span>Orders</span>
+              </div>
+            </Link>
           </Menu.Item>
           <Menu.Item key="3">
+            <Link to="/inventory">
+              <div>
+                <Icon style={{ fontSize: 25 }} type="shopping-cart" />
+                <span>Dashboard</span>
+              </div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="4">
             <Link to="/customers">
               <div>
                 <Icon style={{ fontSize: 25 }} type="user" />
-                <span>dashboard</span>
+                <span>Customers</span>
+              </div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="5">
+            <Link to="/dashboard">
+              <div>
+                <Icon style={{ fontSize: 25 }} type="pie-chart" />
+                <span>Dashboard</span>
               </div>
             </Link>
           </Menu.Item>
