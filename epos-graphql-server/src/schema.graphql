@@ -10,8 +10,10 @@ type Query {
   allOrders: [Order!]!
   customerOrders(id: ID!): [Order!]!
   payForOrder(id: ID!): Post
-  customers: [Customer!]!
+  customers: [Customer]
   customer(id: ID!): Customer
+  orders: [Order!]!
+  products: [Product!]!
 }
 
 type Mutation {
@@ -22,7 +24,17 @@ type Mutation {
   deletePost(id: ID!): Post!
   createCustomer(first: String!, last: String!,
   street: String, city: String, state: String, zip: String, cardNum: String): Customer!
-  orders: [Order!]!
+  createOrder(customerId: String!, products: [LineItemCreateManyWithoutOrderInput!]!): Order!
+
+}
+input LineItemCreateManyWithoutOrderInput {
+  create: [LineItemCreateWithoutOrderInput!]
+  connect: [LineItemWhereUniqueInput!]
+}
+
+input LineItemCreateWithoutOrderInput {
+  purchasePrice: Int
+  product: ProductCreateOneWithoutLineItemsInput
 }
 
 type AuthPayload {

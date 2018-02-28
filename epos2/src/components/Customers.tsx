@@ -17,7 +17,7 @@ class Customers extends React.Component<any, any> {
   }
 
   componentWillReceiveProps(newProps: any) {
-    if (newProps.data.customers) {
+    if (newProps.data.customers && newProps.data.customers.length > 1) {
       let keys = Object.keys(newProps.data.customers[0]).filter(key => key !== '__typename')
       let cols = keys.map(name => ({ title: name, dataIndex: name, key: name }))
       this.setState({
@@ -41,8 +41,9 @@ class Customers extends React.Component<any, any> {
 }
 
 const query = gql`
-  {
+  query {
     customers {
+      id
       first
       last
     }

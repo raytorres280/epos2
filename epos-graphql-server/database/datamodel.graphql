@@ -38,7 +38,7 @@ type LineItem {
   id: ID! @unique
   order: Order
   product: Product
-  purchasePrice: Int!
+  purchasePrice: Int
 }
 
 type Product {

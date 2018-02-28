@@ -8,7 +8,7 @@ import Main from './components/Main'
 import './App.css';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/'
+  uri: 'http://localhost:4000'
 })
 
 const cache = new InMemoryCache()

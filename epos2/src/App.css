@@ -27,6 +27,16 @@
   min-height: 350px;
 }
 
+.add-inv-btn {
+  background-color: green;
+  border-color: green;
+}
+
+.minus-inv-btn {
+  background-color: red;
+  border-color: red;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

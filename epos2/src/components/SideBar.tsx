@@ -19,7 +19,7 @@ export default class SideBar extends React.Component<any, any> {
     return (
       <div className="logo">
         <Menu
-          defaultSelectedKeys={["3"]}
+          defaultSelectedKeys={["4"]}
           mode="inline"
           theme="dark"
         >
@@ -27,7 +27,7 @@ export default class SideBar extends React.Component<any, any> {
             <Link to="/new-order">
               <div>
               <Icon style={{ fontSize: 25 }} type="upload" />
-                <span>new order</span>
+                <span>New Order</span>
               </div>
             </Link>
           </Menu.Item>
@@ -44,7 +44,7 @@ export default class SideBar extends React.Component<any, any> {
             <Link to="/inventory">
               <div>
                 <Icon style={{ fontSize: 25 }} type="shopping-cart" />
-                <span>Dashboard</span>
+                <span>Inventory</span>
               </div>
             </Link>
           </Menu.Item>
