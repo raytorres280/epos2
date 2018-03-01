@@ -1,11 +1,11 @@
 import { getUserId, Context } from '../../utils'
 
 export const order = {
-    async createOrder(parent, { custId, products }, ctx: Context, info) {
+    async createOrder(parent, { customerId, products }, ctx: Context, info) {
         let graphProds = products.map(item => ({
             product: {
                 connect: {
-                    id: item.id
+                    id: item
                 }
             }
         }))
@@ -13,10 +13,10 @@ export const order = {
             {
                 data: {
                     customer: {
-                        connect: { id: custId }
+                        connect: { id: customerId }
                     },
                     lineItems: {
-                        create: products
+                        create: graphProds
                     }
                 }
             },
