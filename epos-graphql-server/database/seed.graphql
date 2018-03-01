@@ -154,15 +154,61 @@ mutation {
     id
   }
 
-  item13: createCustomer(data: {
-    first: "out"
-    last: "of"
-    city: "names"
-    state: "NO"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
+  newOrder: createOrder(data: {
+    customer: {
+      create: {
+        first: "out"
+        last: "of"
+        city: "names"
+        state: "NO"
+        zip: "12345"
+        cardNum: "0123456789abcdef"
+      }
+    }
+    lineItems: {
+      create: [
+        {
+          product: {
+            create: {
+              name: "royale with cheese"
+              price: 10
+              ingredients: {
+                create: [
+                  {
+                    name: "cheese"
+                    category: {
+                      create: {
+                        name: "dairy"
+                      }
+                    }
+                    qty: 7
+                  },
+                  {
+                    name: "ground beef"
+                    category: {
+                      create: {
+                        name: "beef"
+                      }
+                    }
+                    qty: 20
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
   }) {
     id
+    customer{
+      first
+    }
+    lineItems{
+      product{
+        name
+      }
+    }
   }
 
 }
