@@ -39,6 +39,7 @@ type LineItem {
   order: Order
   product: Product
   purchasePrice: Int
+  instructions: String
 }
 
 type Product {

@@ -154,6 +154,30 @@ mutation {
     id
   }
 
+  prod: createProduct(data: {
+    name: "hot dog"
+    price: 225
+  }) {
+    id
+  }
+  prod2: createProduct(data: {
+    name: "roast beef"
+    price: 500
+  }) {
+    id
+  }
+  prod3: createProduct(data: {
+    name: "chicken parm"
+    price: 800
+  }) {
+    id
+  }
+  prod4: createProduct(data: {
+    name: "pizza"
+    price: 900
+  }) {
+    id
+  }
   newOrder: createOrder(data: {
     customer: {
       create: {
@@ -171,7 +195,7 @@ mutation {
           product: {
             create: {
               name: "royale with cheese"
-              price: 10
+              price: 1000
               ingredients: {
                 create: [
                   {

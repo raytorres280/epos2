@@ -1,18 +1,24 @@
 import * as React from "react";
-import { Layout, List, Card } from "antd";
+import { Layout, List, Button } from "antd";
 const { Sider, Content } = Layout;
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
+// components
+import MenuItem from './MenuItem'
+
+// models
+import CartItem from "../models/CartItemModel";
 export interface AppProps {}
 
 class NewOrder extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      cart: [1, 2, 3],
-      products: [{}]
+      cart: [],
+      products: []
     };
+    this.handleAddToCart = this.handleAddToCart.bind(this)
   }
 
   componentWillReceiveProps(newProps: any) {
@@ -32,26 +38,55 @@ class NewOrder extends React.Component<any, any> {
     }
   }
 
+  handleCartItemDelete(item: CartItem) {
+    this.setState({cart: this.state.cart.filter(cartItem => cartItem.id !== item.id)})
+  }
+
+  handleAddToCart(item: CartItem) {
+    console.log('adding cart item', item)
+    this.setState({
+      cart: [...this.state.cart, item]
+    })
+  }
+
+  handleCheckout() {
+    console.log('checking out cart')
+  }
+
   render() {
     return (
       <Layout>
-        <Content>
-          <List
-            grid={{ gutter: 16, column: 3 }}
-            dataSource={this.state.products}
-            renderItem={item => (
-              <List.Item>
-                <Card title={item.name}>Card content</Card>
-              </List.Item>
-            )}
-          />
-        </Content>
-        <Sider>
+        <Layout>
+          <Content style={{ marginRight: 5, marginLeft: 5, marginTop: 5 }}>
+            <List
+              grid={{ gutter: 16, column: 3 }}
+              dataSource={this.state.products}
+              renderItem={item => (
+                <List.Item>
+                  <MenuItem id={item.id} name={item.name} handleAddToCart={this.handleAddToCart}/>
+                </List.Item>
+              )}
+            />
+          </Content>
+        </Layout>
+        <Sider style={{ height: "100%", borderWidth: 1 }}>
           <List
             dataSource={this.state.cart}
             renderItem={item => (
-              <List.Item>
-                <Card title={item}>Card content</Card>
+              <List.Item
+                key={item}
+                style={styles.cartItem}
+                actions={[
+                  <Button
+                    onClick={() => this.handleCartItemDelete(item)}
+                    key={1}
+                    type="danger"
+                    icon="delete"
+                  />
+                ]}
+              >
+                <List.Item.Meta title={"prodName"} />
+                <div>x3</div>
               </List.Item>
             )}
           />
@@ -70,3 +105,11 @@ const query = gql`
 `;
 
 export default graphql(query)(NewOrder);
+
+const styles = {
+  cartItem: {
+    backgroundColor: "white",
+    paddingRight: 5,
+    paddingLeft: 5
+  }
+};
