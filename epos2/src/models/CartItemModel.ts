@@ -2,12 +2,14 @@
 export default class CartItemModel {
     id: string
     name: string
+    price: number
     qty: number
     instructions: string
  
-    constructor(id: string, name: string, qty: number, instructions: string) {
+    constructor(id: string, name: string, price: number, qty: number, instructions: string) {
         this.id = id
         this.name = name
+        this.price = price
         this.qty = qty
         this.instructions = instructions
     }
