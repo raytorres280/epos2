@@ -25,8 +25,14 @@ type Mutation {
   deletePost(id: ID!): Post!
   createCustomer(first: String!, last: String!,
   street: String, city: String, state: String, zip: String, cardNum: String): Customer!
-  createOrder(customerId: String!, products: [String!]!): Order
+  createOrder(customerId: String!, lineItems: [LineItemInput!]!): Order
 
+}
+
+input LineItemInput {
+  qty: Int!
+  price: Int!
+  instructions: String!
 }
 
 # input ProductWithOnlyIdForNewOrderInput {

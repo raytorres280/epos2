@@ -7,6 +7,8 @@ import Orders from './Orders'
 import Customers from './Customers'
 import Inventory from './Inventory'
 import Dashboard from './Dashboard'
+import OrderPay from './OrderPay'
+
 import { Layout } from 'antd'
 const { Header, Footer, Sider, Content } = Layout
 
@@ -29,6 +31,7 @@ class Main extends React.Component {
               <Route path="/customers" component={Customers} />
               <Route path="/inventory" component={Inventory} />
               <Route path="/dashboard" component={Dashboard} />
+              <Route path="/payment" component={OrderPay} />
               <Redirect from="/" to="/customers" />
             </Switch>
           </Content>

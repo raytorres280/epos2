@@ -1,13 +1,17 @@
 import { getUserId, Context } from '../../utils'
 
 export const order = {
-    async createOrder(parent, { customerId, products }, ctx: Context, info) {
-        let graphProds = products.map(item => ({
+    async createOrder(parent, { customerId, lineItems }, ctx: Context, info) {
+        let graphLineItems = lineItems.map(item => ({
             product: {
                 connect: {
                     id: item
                 }
-            }
+            },
+            qty: item.qty,
+            price: item.price,
+            instructions: item.instructions
+
         }))
         return ctx.db.mutation.createOrder(
             {
@@ -16,7 +20,7 @@ export const order = {
                         connect: { id: customerId }
                     },
                     lineItems: {
-                        create: graphProds
+                        create: graphLineItems
                     }
                 }
             },

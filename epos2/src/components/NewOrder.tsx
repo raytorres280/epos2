@@ -10,6 +10,7 @@ import CustomersModal from "./CustomersModal";
 import Cart from "./Cart";
 // models
 import CartItem from "../models/CartItemModel";
+import OrderCreateOverview from "./OrderCreateOverview";
 export interface AppProps {}
 
 class NewOrder extends React.Component<any, any> {
@@ -73,7 +74,8 @@ class NewOrder extends React.Component<any, any> {
 
   selectCustomer(id: string) {
     this.setState({ customerId: id });
-    this.toggleOverviewModal()
+    this.toggleCustomersModal();
+    this.toggleOverviewModal();
   }
 
   toggleCustomersModal() {
@@ -81,11 +83,12 @@ class NewOrder extends React.Component<any, any> {
   }
 
   toggleOverviewModal() {
-    console.log('final overview before checkout')
+    console.log("final overview before checkout");
+    this.setState({ overviewVisible: !this.state.overviewVisible })
   }
-  
+
   render() {
-    let { cart, customersVisible } = this.state;
+    let { cart, customersVisible, customerId } = this.state;
     return (
       <Layout>
         <Content style={{ marginRight: 5, marginLeft: 5, marginTop: 5 }}>
@@ -93,6 +96,12 @@ class NewOrder extends React.Component<any, any> {
             toggleSelf={this.toggleCustomersModal}
             selectCustomer={this.selectCustomer}
             showing={customersVisible}
+          />
+          <OrderCreateOverview
+            showing={this.state.overviewVisible}
+            cart={cart}
+            customerId={customerId}
+            toggleSelf={this.toggleOverviewModal}
           />
           <List
             grid={{ gutter: 16, column: 3 }}
