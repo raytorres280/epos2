@@ -6,8 +6,8 @@ import { graphql } from "react-apollo";
 
 // components
 import MenuItem from "./MenuItem";
-import CustomersModal from './CustomersModal'
-import Cart from './Cart'
+import CustomersModal from "./CustomersModal";
+import Cart from "./Cart";
 // models
 import CartItem from "../models/CartItemModel";
 export interface AppProps {}
@@ -19,13 +19,16 @@ class NewOrder extends React.Component<any, any> {
       cart: [],
       products: [],
       customersVisible: false,
-      customerId: '' // selected customer to place order, later default to guest?
+      overviewVisible: false,
+      customerId: "" // selected customer to place order, later default to guest?
     };
     this.handleAddToCart = this.handleAddToCart.bind(this);
-    this.handleCartItemDelete = this.handleCartItemDelete.bind(this)
-    this.handleCheckout = this.handleCheckout.bind(this)
-    this.createOrder = this.createOrder.bind(this)
-    this.selectCustomer = this.selectCustomer.bind(this)
+    this.handleCartItemDelete = this.handleCartItemDelete.bind(this);
+    this.handleCheckout = this.handleCheckout.bind(this);
+    this.createOrder = this.createOrder.bind(this);
+    this.selectCustomer = this.selectCustomer.bind(this);
+    this.toggleCustomersModal = this.toggleCustomersModal.bind(this);
+    this.toggleOverviewModal = this.toggleOverviewModal.bind(this);
   }
 
   componentWillReceiveProps(newProps: any) {
@@ -64,20 +67,33 @@ class NewOrder extends React.Component<any, any> {
   }
 
   createOrder() {
-    console.log('completing order, create row')
+    console.log("completing order, create row");
     // complete order after selecting customer
   }
 
   selectCustomer(id: string) {
-    this.setState({ customerId: id })
+    this.setState({ customerId: id });
+    this.toggleOverviewModal()
   }
 
+  toggleCustomersModal() {
+    this.setState({ customersVisible: !this.state.customersVisible });
+  }
+
+  toggleOverviewModal() {
+    console.log('final overview before checkout')
+  }
+  
   render() {
-    let { cart, customersVisible } = this.state
+    let { cart, customersVisible } = this.state;
     return (
       <Layout>
         <Content style={{ marginRight: 5, marginLeft: 5, marginTop: 5 }}>
-          <CustomersModal selectCustomer={this.selectCustomer} showing={customersVisible} />
+          <CustomersModal
+            toggleSelf={this.toggleCustomersModal}
+            selectCustomer={this.selectCustomer}
+            showing={customersVisible}
+          />
           <List
             grid={{ gutter: 16, column: 3 }}
             dataSource={this.state.products}
@@ -94,7 +110,11 @@ class NewOrder extends React.Component<any, any> {
           />
         </Content>
         <Sider style={styles.cart}>
-          <Cart list={cart} removeItem={this.handleCartItemDelete} checkout={this.handleCheckout} />
+          <Cart
+            list={cart}
+            removeItem={this.handleCartItemDelete}
+            checkout={this.toggleCustomersModal}
+          />
         </Sider>
       </Layout>
     );
@@ -114,17 +134,12 @@ export default graphql(query)(NewOrder);
 
 const styles = {
   cart: {
-    height: '100%',
-    maxWidth: '400',
-    width: '400',
-    maxHeight: '100%',
+    height: "100%",
+    maxWidth: "400",
+    width: "400",
+    maxHeight: "100%",
     borderWidth: 1,
-    borderLeftStyle: 'solid',
+    borderLeftStyle: "solid",
     backgroundColor: "#F0F2F5"
-  },
-  cartItem: {
-    backgroundColor: "white",
-    paddingRight: 5,
-    paddingLeft: 5
   }
 };

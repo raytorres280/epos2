@@ -6,7 +6,7 @@ export default props => {
   let { list, removeItem } = props;
   return (
     <Layout>
-      <Button onClick={() => console.log("execute passed down func")}>
+      <Button onClick={() => props.checkout()}>
         Checkout
       </Button>
       <div style={{ flex: 1, justifyContent: "space-between" }}>
