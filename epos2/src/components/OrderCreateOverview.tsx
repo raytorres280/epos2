@@ -1,27 +1,24 @@
 import * as React from "react";
-import { Modal, Table, Card } from "antd";
+import { Table, Card } from "antd";
 
 export interface OverViewProps {}
 
 export default props => {
-  let { showing, cart, customerId, toggleSelf } = props;
+  let { cart } = props;
+  let customer = props.customer || { first: 'select a', last: 'customer'}
 
   return (
-    <Modal
-      title="Basic Modal"
-      visible={showing}
-      // onOk={this.handleOk}
-      onCancel={() => toggleSelf()}
-    >
+    <div style={styles.container}>
       <Card
-        title={customerId}
+        title={customer.first + ' ' + customer.last}
         extra={<a href="#">More</a>}
         style={{ width: 300 }}
       >
         <p>address and stuff later</p>
       </Card>
+      <br/>
       <Table pagination={false} columns={columns} dataSource={cart} />
-    </Modal>
+    </div>
   );
 };
 
@@ -47,3 +44,14 @@ const columns = [
     key: "instructions"
   }
 ];
+
+const styles = {
+    container: {
+        border: "solid",
+        borderWidth: 1,
+        borderRadius: 4,
+        overflowY: "scroll",
+        height: 300,
+        justifyContent: 'space-around'
+      }
+} as React.CSSProperties;

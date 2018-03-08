@@ -6,12 +6,12 @@ import { graphql } from "react-apollo";
 
 // components
 import MenuItem from "./MenuItem";
-import CustomersModal from "./CustomersModal";
 import Cart from "./Cart";
+// import CustomersModal from "./CustomersModal";
+// import OrderCreateOverview from "./OrderCreateOverview";
+import CheckoutModal from './CheckoutModal';
 // models
 import CartItem from "../models/CartItemModel";
-import OrderCreateOverview from "./OrderCreateOverview";
-export interface AppProps {}
 
 class NewOrder extends React.Component<any, any> {
   constructor(props: any) {
@@ -21,6 +21,7 @@ class NewOrder extends React.Component<any, any> {
       products: [],
       customersVisible: false,
       overviewVisible: false,
+      checkoutVisible: false,
       customerId: "" // selected customer to place order, later default to guest?
     };
     this.handleAddToCart = this.handleAddToCart.bind(this);
@@ -30,6 +31,8 @@ class NewOrder extends React.Component<any, any> {
     this.selectCustomer = this.selectCustomer.bind(this);
     this.toggleCustomersModal = this.toggleCustomersModal.bind(this);
     this.toggleOverviewModal = this.toggleOverviewModal.bind(this);
+    this.toggleCheckoutModal = this.toggleCheckoutModal.bind(this)
+    this.createOrder = this.createOrder.bind(this)
   }
 
   componentWillReceiveProps(newProps: any) {
@@ -70,6 +73,7 @@ class NewOrder extends React.Component<any, any> {
   createOrder() {
     console.log("completing order, create row");
     // complete order after selecting customer
+
   }
 
   selectCustomer(id: string) {
@@ -87,12 +91,16 @@ class NewOrder extends React.Component<any, any> {
     this.setState({ overviewVisible: !this.state.overviewVisible })
   }
 
+  toggleCheckoutModal() {
+    console.log('toggling checkout modal')
+    this.setState({ checkoutVisible: !this.state.checkoutVisible })
+  }
   render() {
-    let { cart, customersVisible, customerId } = this.state;
+    let { cart, checkoutVisible } = this.state;
     return (
       <Layout>
         <Content style={{ marginRight: 5, marginLeft: 5, marginTop: 5 }}>
-          <CustomersModal
+          {/* <CustomersModal
             toggleSelf={this.toggleCustomersModal}
             selectCustomer={this.selectCustomer}
             showing={customersVisible}
@@ -102,7 +110,10 @@ class NewOrder extends React.Component<any, any> {
             cart={cart}
             customerId={customerId}
             toggleSelf={this.toggleOverviewModal}
-          />
+            createOrder={this.createOrder}
+          /> */}
+          {/* checkout modal here */}
+          <CheckoutModal toggleSelf={this.toggleCheckoutModal} cart={cart} showing={checkoutVisible} />
           <List
             grid={{ gutter: 16, column: 3 }}
             dataSource={this.state.products}
@@ -122,7 +133,7 @@ class NewOrder extends React.Component<any, any> {
           <Cart
             list={cart}
             removeItem={this.handleCartItemDelete}
-            checkout={this.toggleCustomersModal}
+            checkout={this.toggleCheckoutModal}
           />
         </Sider>
       </Layout>
