@@ -1,9 +1,13 @@
 import * as React from "react";
 import { Table, Card } from "antd";
 
-export interface OverViewProps {}
+import CartItemModel from '../models/CartItemModel'
+export interface OverviewProps {
+  cart: CartItemModel[];
+  customer?: any;
+}
 
-export default props => {
+export default (props: OverviewProps) => {
   let { cart } = props;
   let customer = props.customer || { first: 'select a', last: 'customer'}
 

@@ -25,7 +25,8 @@ class Main extends React.Component {
           collapsible={true}
           collapsed={true}
         >
-          <SideBar />
+        {/* make specific menus for user permission levels */}
+          <Route path="/" component={SideBar}/>
         </Sider>
         <Layout>
           <Header>Header</Header>
@@ -37,7 +38,7 @@ class Main extends React.Component {
               <Route path="/inventory" component={Inventory} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/payments/:orderId?" component={OrderPay} />
-              <Redirect from="/" to="/customers" />
+              <Redirect from="/" to="/new-order" />
             </Switch>
           </Content>
           <Footer>Footer</Footer>

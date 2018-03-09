@@ -30,8 +30,11 @@ export const Query = {
     const id = getUserId(ctx)
     return ctx.db.query.user({ where: { id } }, info)
   },
-  orders(parent, { id }, ctx: Context, info) {
+  orders(parent, args, ctx: Context, info) {
     return ctx.db.query.orders({}, info)
+  },
+  ordersUnpaid(parent, args, ctx: Context, info) {
+    return ctx.db.query.orders({ where: { paid: false } }, info)
   },
   products(paren, args, ctx: Context, info) {
     return ctx.db.query.products({ where: { } }, info)

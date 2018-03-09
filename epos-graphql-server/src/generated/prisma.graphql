@@ -44,6 +44,10 @@ type Order implements Node {
   id: ID!
   customer(where: CustomerWhereInput): Customer!
   lineItems(where: LineItemWhereInput, orderBy: LineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LineItem!]
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
 }
 
 type Post implements Node {
@@ -1745,6 +1749,10 @@ type OrderConnection {
 }
 
 input OrderCreateInput {
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
   customer: CustomerCreateOneWithoutOrdersInput!
   lineItems: LineItemCreateManyWithoutOrderInput
 }
@@ -1760,10 +1768,18 @@ input OrderCreateOneWithoutLineItemsInput {
 }
 
 input OrderCreateWithoutCustomerInput {
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
   lineItems: LineItemCreateManyWithoutOrderInput
 }
 
 input OrderCreateWithoutLineItemsInput {
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
   customer: CustomerCreateOneWithoutOrdersInput!
 }
 
@@ -1784,6 +1800,14 @@ type OrderEdge {
 enum OrderOrderByInput {
   id_ASC
   id_DESC
+  paid_ASC
+  paid_DESC
+  prepared_ASC
+  prepared_DESC
+  preparedAt_ASC
+  preparedAt_DESC
+  type_ASC
+  type_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -1792,6 +1816,10 @@ enum OrderOrderByInput {
 
 type OrderPreviousValues {
   id: ID!
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
 }
 
 type OrderSubscriptionPayload {
@@ -1830,6 +1858,10 @@ input OrderSubscriptionWhereInput {
 }
 
 input OrderUpdateInput {
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
   customer: CustomerUpdateOneWithoutOrdersInput
   lineItems: LineItemUpdateManyWithoutOrderInput
 }
@@ -1853,6 +1885,10 @@ input OrderUpdateOneWithoutLineItemsInput {
 }
 
 input OrderUpdateWithoutCustomerDataInput {
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
   lineItems: LineItemUpdateManyWithoutOrderInput
 }
 
@@ -1862,6 +1898,10 @@ input OrderUpdateWithoutCustomerInput {
 }
 
 input OrderUpdateWithoutLineItemsDataInput {
+  paid: Boolean
+  prepared: Boolean
+  preparedAt: DateTime
+  type: StatusEnum
   customer: CustomerUpdateOneWithoutOrdersInput
 }
 
@@ -1944,6 +1984,58 @@ input OrderWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+  paid: Boolean
+  """
+  All values that are not equal to given value.
+  """
+  paid_not: Boolean
+  prepared: Boolean
+  """
+  All values that are not equal to given value.
+  """
+  prepared_not: Boolean
+  preparedAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  preparedAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  preparedAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  preparedAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  preparedAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  preparedAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  preparedAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  preparedAt_gte: DateTime
+  type: StatusEnum
+  """
+  All values that are not equal to given value.
+  """
+  type_not: StatusEnum
+  """
+  All values that are contained in given list.
+  """
+  type_in: [StatusEnum!]
+  """
+  All values that are not contained in given list.
+  """
+  type_not_in: [StatusEnum!]
   customer: CustomerWhereInput
   lineItems_every: LineItemWhereInput
   lineItems_some: LineItemWhereInput
@@ -2675,6 +2767,11 @@ type Query {
   The ID of an object
   """
   id: ID!): Node
+}
+
+enum StatusEnum {
+  PICKUP
+  DELIVERY
 }
 
 type Subscription {

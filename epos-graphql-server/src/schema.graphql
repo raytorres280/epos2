@@ -13,6 +13,7 @@ type Query {
   customers: [Customer]
   customer(id: ID!): Customer
   orders: [Order!]!
+  ordersUnpaid: [Order!]! 
   products: [Product!]!
   ingredients: [Ingredient!]!
 }

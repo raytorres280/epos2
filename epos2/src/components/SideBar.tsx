@@ -2,11 +2,23 @@ import * as React from "react";
 import { Menu, Icon } from "antd";
 import { Link } from "react-router-dom";
 
+// const NEW_ORDER = '1'
+// const ORDERS = '2'
+// const PAYMENTS = '3'
+// const INVENTORY = '4'
+// const CUSTOMERS = '5'
+// const DASHBOARD = '6'
+
+// const routes = {
+//  '0' 
+// }
+
 export default class SideBar extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      collapsed: true
+      collapsed: true,
+      selectedKey: '/new-order'
     };
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
   }
@@ -15,24 +27,33 @@ export default class SideBar extends React.Component<any, any> {
       collapsed: !this.state.collapsed
     });
   }
+  componentWillMount() {
+    this.setState({ selectedKey: this.props.location.pathname })
+  }
+  componentWillReceiveProps(newProps: any) {
+    console.log('getting new props')
+    console.log(this.props)
+    console.log('new', newProps) 
+    this.setState({ selectedKey: newProps.location.pathname })
+  }
+  componentWillUpdate(newState: any) {
+    console.log('updating..')
+  }
   render() {
+    console.log(this.props)
     return (
       <div className="logo">
-        <Menu
-          defaultSelectedKeys={["4"]}
-          mode="inline"
-          theme="dark"
-        >
-          <Menu.Item key="1">
+        <Menu defaultSelectedKeys={[this.state.selectedKey]} mode="inline" theme="dark">
+          <Menu.Item key="/new-order">
             <Link to="/new-order">
               <div>
-              <Icon style={{ fontSize: 25 }} type="upload" />
+                <Icon style={{ fontSize: 25 }} type="upload" />
                 <span>New Order</span>
               </div>
             </Link>
           </Menu.Item>
-          
-          <Menu.Item key="2">
+
+          <Menu.Item key="/orders">
             <Link to="/orders">
               <div>
                 <Icon style={{ fontSize: 25 }} type="inbox" />
@@ -40,8 +61,8 @@ export default class SideBar extends React.Component<any, any> {
               </div>
             </Link>
           </Menu.Item>
-          <Menu.Item key="3">
-            <Link to="/payments/">
+          <Menu.Item key="/payments">
+            <Link to="/payments">
               <div>
                 <Icon style={{ fontSize: 25 }} type="credit-card" />
                 <span>Pay</span>
@@ -56,7 +77,7 @@ export default class SideBar extends React.Component<any, any> {
               </div>
             </Link>
           </Menu.Item>
-          <Menu.Item key="5">
+          <Menu.Item key="/customers">
             <Link to="/customers">
               <div>
                 <Icon style={{ fontSize: 25 }} type="user" />
@@ -64,7 +85,7 @@ export default class SideBar extends React.Component<any, any> {
               </div>
             </Link>
           </Menu.Item>
-          <Menu.Item key="6">
+          <Menu.Item key="/dashboard">
             <Link to="/dashboard">
               <div>
                 <Icon style={{ fontSize: 25 }} type="pie-chart" />

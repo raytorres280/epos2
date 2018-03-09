@@ -32,6 +32,14 @@ type Order {
   id: ID! @unique
   customer: Customer!
   lineItems: [LineItem!]!
+  paid: Boolean @default(value: false)
+  prepared: Boolean @default(value: false)
+  preparedAt: DateTime @default(value: null)
+  type: StatusEnum @default(value: PICKUP)
+}
+enum StatusEnum {
+  PICKUP
+  DELIVERY
 }
 
 type LineItem {
