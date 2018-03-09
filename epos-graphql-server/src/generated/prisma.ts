@@ -39,6 +39,7 @@ type LineItem implements Node {
   id: ID!
   order(where: OrderWhereInput): Order
   product(where: ProductWhereInput): Product
+  qty: Int
   purchasePrice: Int
   instructions: String
 }
@@ -1314,6 +1315,7 @@ type LineItemConnection {
 }
 
 input LineItemCreateInput {
+  qty: Int
   purchasePrice: Int
   instructions: String
   order: OrderCreateOneWithoutLineItemsInput
@@ -1331,12 +1333,14 @@ input LineItemCreateManyWithoutProductInput {
 }
 
 input LineItemCreateWithoutOrderInput {
+  qty: Int
   purchasePrice: Int
   instructions: String
   product: ProductCreateOneWithoutLineItemsInput
 }
 
 input LineItemCreateWithoutProductInput {
+  qty: Int
   purchasePrice: Int
   instructions: String
   order: OrderCreateOneWithoutLineItemsInput
@@ -1359,6 +1363,8 @@ type LineItemEdge {
 enum LineItemOrderByInput {
   id_ASC
   id_DESC
+  qty_ASC
+  qty_DESC
   purchasePrice_ASC
   purchasePrice_DESC
   instructions_ASC
@@ -1371,6 +1377,7 @@ enum LineItemOrderByInput {
 
 type LineItemPreviousValues {
   id: ID!
+  qty: Int
   purchasePrice: Int
   instructions: String
 }
@@ -1411,6 +1418,7 @@ input LineItemSubscriptionWhereInput {
 }
 
 input LineItemUpdateInput {
+  qty: Int
   purchasePrice: Int
   instructions: String
   order: OrderUpdateOneWithoutLineItemsInput
@@ -1436,6 +1444,7 @@ input LineItemUpdateManyWithoutProductInput {
 }
 
 input LineItemUpdateWithoutOrderDataInput {
+  qty: Int
   purchasePrice: Int
   instructions: String
   product: ProductUpdateOneWithoutLineItemsInput
@@ -1447,6 +1456,7 @@ input LineItemUpdateWithoutOrderInput {
 }
 
 input LineItemUpdateWithoutProductDataInput {
+  qty: Int
   purchasePrice: Int
   instructions: String
   order: OrderUpdateOneWithoutLineItemsInput
@@ -1531,6 +1541,35 @@ input LineItemWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+  qty: Int
+  """
+  All values that are not equal to given value.
+  """
+  qty_not: Int
+  """
+  All values that are contained in given list.
+  """
+  qty_in: [Int!]
+  """
+  All values that are not contained in given list.
+  """
+  qty_not_in: [Int!]
+  """
+  All values less than the given value.
+  """
+  qty_lt: Int
+  """
+  All values less than or equal the given value.
+  """
+  qty_lte: Int
+  """
+  All values greater than the given value.
+  """
+  qty_gt: Int
+  """
+  All values greater than or equal the given value.
+  """
+  qty_gte: Int
   purchasePrice: Int
   """
   All values that are not equal to given value.
@@ -3069,6 +3108,8 @@ export type OrderOrderByInput =
 export type LineItemOrderByInput = 
   'id_ASC' |
   'id_DESC' |
+  'qty_ASC' |
+  'qty_DESC' |
   'purchasePrice_ASC' |
   'purchasePrice_DESC' |
   'instructions_ASC' |
@@ -3249,6 +3290,14 @@ export interface LineItemWhereInput {
   id_not_starts_with?: ID_Input
   id_ends_with?: ID_Input
   id_not_ends_with?: ID_Input
+  qty?: Int
+  qty_not?: Int
+  qty_in?: Int[] | Int
+  qty_not_in?: Int[] | Int
+  qty_lt?: Int
+  qty_lte?: Int
+  qty_gt?: Int
+  qty_gte?: Int
   purchasePrice?: Int
   purchasePrice_not?: Int
   purchasePrice_in?: Int[] | Int
@@ -3421,6 +3470,7 @@ export interface CustomerWhereUniqueInput {
 }
 
 export interface LineItemCreateWithoutOrderInput {
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
   product?: ProductCreateOneWithoutLineItemsInput
@@ -3531,6 +3581,7 @@ export interface OrderUpdateWithoutLineItemsDataInput {
 }
 
 export interface LineItemCreateInput {
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
   order?: OrderCreateOneWithoutLineItemsInput
@@ -3608,6 +3659,7 @@ export interface OrderWhereInput {
 }
 
 export interface LineItemCreateWithoutProductInput {
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
   order?: OrderCreateOneWithoutLineItemsInput
@@ -4109,12 +4161,14 @@ export interface ProductUpdateOneWithoutLineItemsInput {
 }
 
 export interface LineItemUpdateWithoutOrderDataInput {
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
   product?: ProductUpdateOneWithoutLineItemsInput
 }
 
 export interface LineItemUpdateWithoutProductDataInput {
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
   order?: OrderUpdateOneWithoutLineItemsInput
@@ -4173,6 +4227,7 @@ export interface ProductWhereInput {
 }
 
 export interface LineItemUpdateInput {
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
   order?: OrderUpdateOneWithoutLineItemsInput
@@ -4435,6 +4490,7 @@ export interface LineItem extends Node {
   id: ID_Output
   order?: Order
   product?: Product
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
 }
@@ -4526,6 +4582,7 @@ export interface Order extends Node {
 
 export interface LineItemPreviousValues {
   id: ID_Output
+  qty?: Int
   purchasePrice?: Int
   instructions?: String
 }

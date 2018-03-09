@@ -5,11 +5,11 @@ export const order = {
         let graphLineItems = lineItems.map(item => ({
             product: {
                 connect: {
-                    id: item
+                    id: item.productId
                 }
             },
             qty: item.qty,
-            price: item.price,
+            purchasePrice: item.purchasePrice,
             instructions: item.instructions
 
         }))

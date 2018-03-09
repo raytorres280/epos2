@@ -30,8 +30,9 @@ type Mutation {
 }
 
 input LineItemInput {
+  productId: String!
   qty: Int!
-  price: Int!
+  purchasePrice: Int!
   instructions: String!
 }
 

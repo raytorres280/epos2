@@ -41,6 +41,14 @@ export default class SideBar extends React.Component<any, any> {
             </Link>
           </Menu.Item>
           <Menu.Item key="3">
+            <Link to="/payments/">
+              <div>
+                <Icon style={{ fontSize: 25 }} type="credit-card" />
+                <span>Pay</span>
+              </div>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="4">
             <Link to="/inventory">
               <div>
                 <Icon style={{ fontSize: 25 }} type="shopping-cart" />
@@ -48,7 +56,7 @@ export default class SideBar extends React.Component<any, any> {
               </div>
             </Link>
           </Menu.Item>
-          <Menu.Item key="4">
+          <Menu.Item key="5">
             <Link to="/customers">
               <div>
                 <Icon style={{ fontSize: 25 }} type="user" />
@@ -56,7 +64,7 @@ export default class SideBar extends React.Component<any, any> {
               </div>
             </Link>
           </Menu.Item>
-          <Menu.Item key="5">
+          <Menu.Item key="6">
             <Link to="/dashboard">
               <div>
                 <Icon style={{ fontSize: 25 }} type="pie-chart" />

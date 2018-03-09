@@ -3,13 +3,14 @@ import { Layout, List } from "antd";
 const { Sider, Content } = Layout;
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
+import { withRouter } from "react-router-dom";
 
 // components
 import MenuItem from "./MenuItem";
 import Cart from "./Cart";
 // import CustomersModal from "./CustomersModal";
 // import OrderCreateOverview from "./OrderCreateOverview";
-import CheckoutModal from './CheckoutModal';
+import CheckoutModal from "./CheckoutModal";
 // models
 import CartItem from "../models/CartItemModel";
 
@@ -31,8 +32,9 @@ class NewOrder extends React.Component<any, any> {
     this.selectCustomer = this.selectCustomer.bind(this);
     this.toggleCustomersModal = this.toggleCustomersModal.bind(this);
     this.toggleOverviewModal = this.toggleOverviewModal.bind(this);
-    this.toggleCheckoutModal = this.toggleCheckoutModal.bind(this)
-    this.createOrder = this.createOrder.bind(this)
+    this.toggleCheckoutModal = this.toggleCheckoutModal.bind(this);
+    this.createOrder = this.createOrder.bind(this);
+    this.navigateToPayOrder = this.navigateToPayOrder.bind(this);
   }
 
   componentWillReceiveProps(newProps: any) {
@@ -73,7 +75,6 @@ class NewOrder extends React.Component<any, any> {
   createOrder() {
     console.log("completing order, create row");
     // complete order after selecting customer
-
   }
 
   selectCustomer(id: string) {
@@ -88,12 +89,17 @@ class NewOrder extends React.Component<any, any> {
 
   toggleOverviewModal() {
     console.log("final overview before checkout");
-    this.setState({ overviewVisible: !this.state.overviewVisible })
+    this.setState({ overviewVisible: !this.state.overviewVisible });
   }
 
   toggleCheckoutModal() {
-    console.log('toggling checkout modal')
-    this.setState({ checkoutVisible: !this.state.checkoutVisible })
+    console.log("toggling checkout modal");
+    this.setState({ checkoutVisible: !this.state.checkoutVisible });
+  }
+
+  navigateToPayOrder(orderId: string) {
+    console.log("going to payment screen with order...", orderId);
+    this.props.history.push(`payments/${orderId}`)
   }
   render() {
     let { cart, checkoutVisible } = this.state;
@@ -113,7 +119,12 @@ class NewOrder extends React.Component<any, any> {
             createOrder={this.createOrder}
           /> */}
           {/* checkout modal here */}
-          <CheckoutModal toggleSelf={this.toggleCheckoutModal} cart={cart} showing={checkoutVisible} />
+          <CheckoutModal
+            navigateToPayOrder={this.navigateToPayOrder}
+            toggleSelf={this.toggleCheckoutModal}
+            cart={cart}
+            showing={checkoutVisible}
+          />
           <List
             grid={{ gutter: 16, column: 3 }}
             dataSource={this.state.products}
@@ -150,7 +161,7 @@ const query = gql`
   }
 `;
 
-export default graphql(query)(NewOrder);
+export default graphql(query)(withRouter(NewOrder));
 
 const styles = {
   cart: {

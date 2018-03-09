@@ -38,6 +38,7 @@ type LineItem {
   id: ID! @unique
   order: Order
   product: Product
+  qty: Int
   purchasePrice: Int
   instructions: String
 }
