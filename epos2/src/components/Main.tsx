@@ -1,6 +1,6 @@
 import * as React from "react";
 // import history from '../history'
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import SideBar from "./SideBar";
 import NewOrder from "./NewOrder";
 import Orders from "./Orders";
@@ -12,7 +12,7 @@ import OrderPay from "./OrderPay";
 import { Layout } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
 
-class Main extends React.Component {
+class Main extends React.Component<any, any> {
   componentWillMount() {
     // history.push('/customers')
   }
@@ -25,8 +25,12 @@ class Main extends React.Component {
           collapsible={true}
           collapsed={true}
         >
-        {/* make specific menus for user permission levels */}
-          <Route path="/" component={SideBar}/>
+          {/* make specific menus for user permission levels */}
+          <Route
+            path="/"
+            history={this.props.history}
+            render={props => <SideBar {...props} />}
+          />
         </Sider>
         <Layout>
           <Header>Header</Header>
@@ -37,7 +41,11 @@ class Main extends React.Component {
               <Route path="/customers" component={Customers} />
               <Route path="/inventory" component={Inventory} />
               <Route path="/dashboard" component={Dashboard} />
-              <Route path="/payments/:orderId?" component={OrderPay} />
+              <Route
+                path="/payments/:orderId?"
+                history={this.props.history}
+                render={props => <OrderPay {...props} />}
+              />
               <Redirect from="/" to="/new-order" />
             </Switch>
           </Content>
@@ -48,4 +56,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main;
+export default withRouter<any, any>(Main);

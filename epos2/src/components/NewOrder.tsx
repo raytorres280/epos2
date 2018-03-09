@@ -36,24 +36,9 @@ class NewOrder extends React.Component<any, any> {
     this.createOrder = this.createOrder.bind(this);
     this.navigateToPayOrder = this.navigateToPayOrder.bind(this);
   }
-
-  componentWillReceiveProps(newProps: any) {
-    if (newProps.data.products !== this.props.data.products) {
-      let keys = Object.keys(newProps.data.products[0]).filter(
-        key => key !== "__typename"
-      );
-      let cols = keys.map(name => ({
-        title: name,
-        dataIndex: name,
-        key: name
-      }));
-      this.setState({
-        columns: cols,
-        products: newProps.data.products
-      });
-    }
+  componentWillUnmount() {
+    console.log('new order unmounting')
   }
-
   handleCartItemDelete(id: string) {
     this.setState({
       cart: this.state.cart.filter(cartItem => cartItem.id !== id)
@@ -127,7 +112,7 @@ class NewOrder extends React.Component<any, any> {
           />
           <List
             grid={{ gutter: 16, column: 3 }}
-            dataSource={this.state.products}
+            dataSource={this.props.data.products || []}
             renderItem={item => (
               <List.Item>
                 <MenuItem

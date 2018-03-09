@@ -33,17 +33,29 @@ export default class SideBar extends React.Component<any, any> {
   componentWillReceiveProps(newProps: any) {
     console.log('getting new props')
     console.log(this.props)
-    console.log('new', newProps) 
-    this.setState({ selectedKey: newProps.location.pathname })
+    console.log('new', newProps)
+    if (newProps.history.location.pathname.includes('/payments/')) {
+      // if i got a payment with router info (orderID)
+      console.log('payment jump to order')
+      this.setState({ selectedKey: '/payments' })
+    } else {
+      this.setState({ selectedKey: newProps.location.pathname })
+    }
+    
   }
-  componentWillUpdate(newState: any) {
+  componentWillUpdate(newProps: any, newState: any) {
     console.log('updating..')
   }
   render() {
     console.log(this.props)
     return (
       <div className="logo">
-        <Menu defaultSelectedKeys={[this.state.selectedKey]} mode="inline" theme="dark">
+        <Menu 
+          defaultSelectedKeys={['/new-order']}
+          mode="inline"
+          theme="dark"
+          selectedKeys={[this.state.selectedKey]}
+        >
           <Menu.Item key="/new-order">
             <Link to="/new-order">
               <div>
