@@ -16,25 +16,12 @@ class Orders extends React.Component<any, any> {
     };
   }
 
-  componentWillReceiveProps(newProps: any) {
-    if (newProps.data.Orders) {
-      let keys = Object.keys(newProps.data.Orders[0]).filter(key => key !== '__typename')
-      let cols = keys.map(name => ({ title: name, dataIndex: name, key: name }))
-      this.setState({
-        columns: cols,
-        Orders: newProps.data.Orders
-      })
-    }
-  }
-
   render() {
     return (
       <Table
-        columns={this.state.columns}
-        expandedRowRender={() => (
-          <p style={{ margin: 0 }}>hello world</p>
-        )}
-        dataSource={this.state.Orders}
+        columns={columns}
+        expandedRowRender={() => <p style={{ margin: 0 }}>hello world</p>}
+        dataSource={this.props.data.orders}
       />
     );
   }
@@ -42,11 +29,41 @@ class Orders extends React.Component<any, any> {
 
 const query = gql`
   {
-    Orders {
+    orders {
       id
-      
+      customer {
+        first
+        last
+      }
+      lineItems {
+        product {
+          id
+          name
+        }
+        purchasePrice
+      }
+      paid
+      prepared
+      createdAt
+      isDelivery
     }
   }
-`
+`;
 
-export default graphql(query)(Orders)
+export default graphql<any, any>(query)(Orders);
+
+const columns = [
+  {
+    title: "Order ID",
+    dataIndex: "id",
+    key: "id",
+  },
+  {
+    title: "customer - first name",
+    dataIndex: "customer.first"
+  },
+  {
+    title: "customer - last name",
+    dataIndex: "customer.last"
+  }
+];

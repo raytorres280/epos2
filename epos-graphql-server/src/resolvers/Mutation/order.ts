@@ -26,5 +26,16 @@ export const order = {
             },
             info
         )
+    },
+
+    async updateOrderPaidStatus(parent, { id }, ctx: Context, info) {
+        return ctx.db.mutation.updateOrder(
+            {
+                data: {
+                    paid: true
+                },
+                where: { id }
+            }
+        )
     }
 }

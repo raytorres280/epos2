@@ -50,8 +50,9 @@ type Order implements Node {
   lineItems(where: LineItemWhereInput, orderBy: LineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LineItem!]
   paid: Boolean
   prepared: Boolean
+  createdAt: DateTime!
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
 }
 
 type Post implements Node {
@@ -1756,7 +1757,7 @@ input OrderCreateInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerCreateOneWithoutOrdersInput!
   lineItems: LineItemCreateManyWithoutOrderInput
 }
@@ -1775,7 +1776,7 @@ input OrderCreateWithoutCustomerInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   lineItems: LineItemCreateManyWithoutOrderInput
 }
 
@@ -1783,7 +1784,7 @@ input OrderCreateWithoutLineItemsInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerCreateOneWithoutOrdersInput!
 }
 
@@ -1808,22 +1809,23 @@ enum OrderOrderByInput {
   paid_DESC
   prepared_ASC
   prepared_DESC
-  preparedAt_ASC
-  preparedAt_DESC
-  type_ASC
-  type_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  preparedAt_ASC
+  preparedAt_DESC
+  isDelivery_ASC
+  isDelivery_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type OrderPreviousValues {
   id: ID!
   paid: Boolean
   prepared: Boolean
+  createdAt: DateTime!
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
 }
 
 type OrderSubscriptionPayload {
@@ -1865,7 +1867,7 @@ input OrderUpdateInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerUpdateOneWithoutOrdersInput
   lineItems: LineItemUpdateManyWithoutOrderInput
 }
@@ -1892,7 +1894,7 @@ input OrderUpdateWithoutCustomerDataInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   lineItems: LineItemUpdateManyWithoutOrderInput
 }
 
@@ -1905,7 +1907,7 @@ input OrderUpdateWithoutLineItemsDataInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerUpdateOneWithoutOrdersInput
 }
 
@@ -1998,6 +2000,35 @@ input OrderWhereInput {
   All values that are not equal to given value.
   """
   prepared_not: Boolean
+  createdAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
   preparedAt: DateTime
   """
   All values that are not equal to given value.
@@ -2027,19 +2058,11 @@ input OrderWhereInput {
   All values greater than or equal the given value.
   """
   preparedAt_gte: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   """
   All values that are not equal to given value.
   """
-  type_not: StatusEnum
-  """
-  All values that are contained in given list.
-  """
-  type_in: [StatusEnum!]
-  """
-  All values that are not contained in given list.
-  """
-  type_not_in: [StatusEnum!]
+  isDelivery_not: Boolean
   customer: CustomerWhereInput
   lineItems_every: LineItemWhereInput
   lineItems_some: LineItemWhereInput
@@ -2773,11 +2796,6 @@ type Query {
   id: ID!): Node
 }
 
-enum StatusEnum {
-  PICKUP
-  DELIVERY
-}
-
 type Subscription {
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
@@ -3158,20 +3176,6 @@ input UserWhereUniqueInput {
 }
 `
 
-export type PostOrderByInput = 
-  'id_ASC' |
-  'id_DESC' |
-  'createdAt_ASC' |
-  'createdAt_DESC' |
-  'updatedAt_ASC' |
-  'updatedAt_DESC' |
-  'isPublished_ASC' |
-  'isPublished_DESC' |
-  'title_ASC' |
-  'title_DESC' |
-  'text_ASC' |
-  'text_DESC'
-
 export type UserOrderByInput = 
   'id_ASC' |
   'id_DESC' |
@@ -3185,10 +3189,6 @@ export type UserOrderByInput =
   'updatedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC'
-
-export type StatusEnum = 
-  'PICKUP' |
-  'DELIVERY'
 
 export type CustomerOrderByInput = 
   'id_ASC' |
@@ -3219,14 +3219,14 @@ export type OrderOrderByInput =
   'paid_DESC' |
   'prepared_ASC' |
   'prepared_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
   'preparedAt_ASC' |
   'preparedAt_DESC' |
-  'type_ASC' |
-  'type_DESC' |
+  'isDelivery_ASC' |
+  'isDelivery_DESC' |
   'updatedAt_ASC' |
-  'updatedAt_DESC' |
-  'createdAt_ASC' |
-  'createdAt_DESC'
+  'updatedAt_DESC'
 
 export type LineItemOrderByInput = 
   'id_ASC' |
@@ -3242,10 +3242,19 @@ export type LineItemOrderByInput =
   'createdAt_ASC' |
   'createdAt_DESC'
 
-export type MutationType = 
-  'CREATED' |
-  'UPDATED' |
-  'DELETED'
+export type PostOrderByInput = 
+  'id_ASC' |
+  'id_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC' |
+  'isPublished_ASC' |
+  'isPublished_DESC' |
+  'title_ASC' |
+  'title_DESC' |
+  'text_ASC' |
+  'text_DESC'
 
 export type IngredientOrderByInput = 
   'id_ASC' |
@@ -3281,12 +3290,14 @@ export type CategoryOrderByInput =
   'createdAt_ASC' |
   'createdAt_DESC'
 
-export interface LineItemCreateInput {
-  qty?: Int
-  purchasePrice?: Int
-  instructions?: String
-  order?: OrderCreateOneWithoutLineItemsInput
-  product?: ProductCreateOneWithoutLineItemsInput
+export type MutationType = 
+  'CREATED' |
+  'UPDATED' |
+  'DELETED'
+
+export interface OrderCreateOneWithoutLineItemsInput {
+  create?: OrderCreateWithoutLineItemsInput
+  connect?: OrderWhereUniqueInput
 }
 
 export interface PostWhereInput {
@@ -3355,14 +3366,39 @@ export interface PostWhereInput {
   author?: UserWhereInput
 }
 
+export interface LineItemUpsertWithoutOrderInput {
+  where: LineItemWhereUniqueInput
+  update: LineItemUpdateWithoutOrderDataInput
+  create: LineItemCreateWithoutOrderInput
+}
+
+export interface IngredientUpdateManyInput {
+  create?: IngredientCreateInput[] | IngredientCreateInput
+  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  disconnect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  delete?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+}
+
+export interface PostCreateInput {
+  isPublished?: Boolean
+  title: String
+  text: String
+  author: UserCreateOneWithoutPostsInput
+}
+
 export interface CategoryCreateInput {
   name: String
   ingredients?: IngredientCreateManyWithoutCategoryInput
 }
 
-export interface CustomerWhereInput {
-  AND?: CustomerWhereInput[] | CustomerWhereInput
-  OR?: CustomerWhereInput[] | CustomerWhereInput
+export interface UserCreateOneWithoutPostsInput {
+  create?: UserCreateWithoutPostsInput
+  connect?: UserWhereUniqueInput
+}
+
+export interface LineItemWhereInput {
+  AND?: LineItemWhereInput[] | LineItemWhereInput
+  OR?: LineItemWhereInput[] | LineItemWhereInput
   id?: ID_Input
   id_not?: ID_Input
   id_in?: ID_Input[] | ID_Input
@@ -3377,139 +3413,38 @@ export interface CustomerWhereInput {
   id_not_starts_with?: ID_Input
   id_ends_with?: ID_Input
   id_not_ends_with?: ID_Input
-  first?: String
-  first_not?: String
-  first_in?: String[] | String
-  first_not_in?: String[] | String
-  first_lt?: String
-  first_lte?: String
-  first_gt?: String
-  first_gte?: String
-  first_contains?: String
-  first_not_contains?: String
-  first_starts_with?: String
-  first_not_starts_with?: String
-  first_ends_with?: String
-  first_not_ends_with?: String
-  last?: String
-  last_not?: String
-  last_in?: String[] | String
-  last_not_in?: String[] | String
-  last_lt?: String
-  last_lte?: String
-  last_gt?: String
-  last_gte?: String
-  last_contains?: String
-  last_not_contains?: String
-  last_starts_with?: String
-  last_not_starts_with?: String
-  last_ends_with?: String
-  last_not_ends_with?: String
-  street?: String
-  street_not?: String
-  street_in?: String[] | String
-  street_not_in?: String[] | String
-  street_lt?: String
-  street_lte?: String
-  street_gt?: String
-  street_gte?: String
-  street_contains?: String
-  street_not_contains?: String
-  street_starts_with?: String
-  street_not_starts_with?: String
-  street_ends_with?: String
-  street_not_ends_with?: String
-  city?: String
-  city_not?: String
-  city_in?: String[] | String
-  city_not_in?: String[] | String
-  city_lt?: String
-  city_lte?: String
-  city_gt?: String
-  city_gte?: String
-  city_contains?: String
-  city_not_contains?: String
-  city_starts_with?: String
-  city_not_starts_with?: String
-  city_ends_with?: String
-  city_not_ends_with?: String
-  state?: String
-  state_not?: String
-  state_in?: String[] | String
-  state_not_in?: String[] | String
-  state_lt?: String
-  state_lte?: String
-  state_gt?: String
-  state_gte?: String
-  state_contains?: String
-  state_not_contains?: String
-  state_starts_with?: String
-  state_not_starts_with?: String
-  state_ends_with?: String
-  state_not_ends_with?: String
-  zip?: String
-  zip_not?: String
-  zip_in?: String[] | String
-  zip_not_in?: String[] | String
-  zip_lt?: String
-  zip_lte?: String
-  zip_gt?: String
-  zip_gte?: String
-  zip_contains?: String
-  zip_not_contains?: String
-  zip_starts_with?: String
-  zip_not_starts_with?: String
-  zip_ends_with?: String
-  zip_not_ends_with?: String
-  cardNum?: String
-  cardNum_not?: String
-  cardNum_in?: String[] | String
-  cardNum_not_in?: String[] | String
-  cardNum_lt?: String
-  cardNum_lte?: String
-  cardNum_gt?: String
-  cardNum_gte?: String
-  cardNum_contains?: String
-  cardNum_not_contains?: String
-  cardNum_starts_with?: String
-  cardNum_not_starts_with?: String
-  cardNum_ends_with?: String
-  cardNum_not_ends_with?: String
-  createdAt?: DateTime
-  createdAt_not?: DateTime
-  createdAt_in?: DateTime[] | DateTime
-  createdAt_not_in?: DateTime[] | DateTime
-  createdAt_lt?: DateTime
-  createdAt_lte?: DateTime
-  createdAt_gt?: DateTime
-  createdAt_gte?: DateTime
-  orders_every?: OrderWhereInput
-  orders_some?: OrderWhereInput
-  orders_none?: OrderWhereInput
-}
-
-export interface PostCreateInput {
-  isPublished?: Boolean
-  title: String
-  text: String
-  author: UserCreateOneWithoutPostsInput
-}
-
-export interface IngredientUpdateManyInput {
-  create?: IngredientCreateInput[] | IngredientCreateInput
-  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-  disconnect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-  delete?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
-}
-
-export interface UserCreateOneWithoutPostsInput {
-  create?: UserCreateWithoutPostsInput
-  connect?: UserWhereUniqueInput
-}
-
-export interface IngredientCreateManyWithoutCategoryInput {
-  create?: IngredientCreateWithoutCategoryInput[] | IngredientCreateWithoutCategoryInput
-  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
+  qty?: Int
+  qty_not?: Int
+  qty_in?: Int[] | Int
+  qty_not_in?: Int[] | Int
+  qty_lt?: Int
+  qty_lte?: Int
+  qty_gt?: Int
+  qty_gte?: Int
+  purchasePrice?: Int
+  purchasePrice_not?: Int
+  purchasePrice_in?: Int[] | Int
+  purchasePrice_not_in?: Int[] | Int
+  purchasePrice_lt?: Int
+  purchasePrice_lte?: Int
+  purchasePrice_gt?: Int
+  purchasePrice_gte?: Int
+  instructions?: String
+  instructions_not?: String
+  instructions_in?: String[] | String
+  instructions_not_in?: String[] | String
+  instructions_lt?: String
+  instructions_lte?: String
+  instructions_gt?: String
+  instructions_gte?: String
+  instructions_contains?: String
+  instructions_not_contains?: String
+  instructions_starts_with?: String
+  instructions_not_starts_with?: String
+  instructions_ends_with?: String
+  instructions_not_ends_with?: String
+  order?: OrderWhereInput
+  product?: ProductWhereInput
 }
 
 export interface UserCreateWithoutPostsInput {
@@ -3644,7 +3579,7 @@ export interface OrderCreateWithoutCustomerInput {
   paid?: Boolean
   prepared?: Boolean
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
   lineItems?: LineItemCreateManyWithoutOrderInput
 }
 
@@ -3740,7 +3675,7 @@ export interface OrderCreateInput {
   paid?: Boolean
   prepared?: Boolean
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
   customer: CustomerCreateOneWithoutOrdersInput
   lineItems?: LineItemCreateManyWithoutOrderInput
 }
@@ -3776,14 +3711,16 @@ export interface OrderUpdateWithoutLineItemsDataInput {
   paid?: Boolean
   prepared?: Boolean
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
   customer?: CustomerUpdateOneWithoutOrdersInput
 }
 
-export interface ProductUpsertWithoutLineItemsInput {
-  where: ProductWhereUniqueInput
-  update: ProductUpdateWithoutLineItemsDataInput
-  create: ProductCreateWithoutLineItemsInput
+export interface LineItemCreateInput {
+  qty?: Int
+  purchasePrice?: Int
+  instructions?: String
+  order?: OrderCreateOneWithoutLineItemsInput
+  product?: ProductCreateOneWithoutLineItemsInput
 }
 
 export interface OrderUpdateOneWithoutLineItemsInput {
@@ -3795,9 +3732,10 @@ export interface OrderUpdateOneWithoutLineItemsInput {
   upsert?: OrderUpsertWithoutLineItemsInput
 }
 
-export interface OrderCreateOneWithoutLineItemsInput {
-  create?: OrderCreateWithoutLineItemsInput
-  connect?: OrderWhereUniqueInput
+export interface ProductUpsertWithoutLineItemsInput {
+  where: ProductWhereUniqueInput
+  update: ProductUpdateWithoutLineItemsDataInput
+  create: ProductCreateWithoutLineItemsInput
 }
 
 export interface CustomerUpsertWithoutOrdersInput {
@@ -3810,7 +3748,7 @@ export interface OrderCreateWithoutLineItemsInput {
   paid?: Boolean
   prepared?: Boolean
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
   customer: CustomerCreateOneWithoutOrdersInput
 }
 
@@ -3830,7 +3768,7 @@ export interface OrderUpdateInput {
   paid?: Boolean
   prepared?: Boolean
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
   customer?: CustomerUpdateOneWithoutOrdersInput
   lineItems?: LineItemUpdateManyWithoutOrderInput
 }
@@ -3840,10 +3778,49 @@ export interface LineItemCreateManyWithoutProductInput {
   connect?: LineItemWhereUniqueInput[] | LineItemWhereUniqueInput
 }
 
-export interface LineItemUpsertWithoutOrderInput {
-  where: LineItemWhereUniqueInput
-  update: LineItemUpdateWithoutOrderDataInput
-  create: LineItemCreateWithoutOrderInput
+export interface OrderWhereInput {
+  AND?: OrderWhereInput[] | OrderWhereInput
+  OR?: OrderWhereInput[] | OrderWhereInput
+  id?: ID_Input
+  id_not?: ID_Input
+  id_in?: ID_Input[] | ID_Input
+  id_not_in?: ID_Input[] | ID_Input
+  id_lt?: ID_Input
+  id_lte?: ID_Input
+  id_gt?: ID_Input
+  id_gte?: ID_Input
+  id_contains?: ID_Input
+  id_not_contains?: ID_Input
+  id_starts_with?: ID_Input
+  id_not_starts_with?: ID_Input
+  id_ends_with?: ID_Input
+  id_not_ends_with?: ID_Input
+  paid?: Boolean
+  paid_not?: Boolean
+  prepared?: Boolean
+  prepared_not?: Boolean
+  createdAt?: DateTime
+  createdAt_not?: DateTime
+  createdAt_in?: DateTime[] | DateTime
+  createdAt_not_in?: DateTime[] | DateTime
+  createdAt_lt?: DateTime
+  createdAt_lte?: DateTime
+  createdAt_gt?: DateTime
+  createdAt_gte?: DateTime
+  preparedAt?: DateTime
+  preparedAt_not?: DateTime
+  preparedAt_in?: DateTime[] | DateTime
+  preparedAt_not_in?: DateTime[] | DateTime
+  preparedAt_lt?: DateTime
+  preparedAt_lte?: DateTime
+  preparedAt_gt?: DateTime
+  preparedAt_gte?: DateTime
+  isDelivery?: Boolean
+  isDelivery_not?: Boolean
+  customer?: CustomerWhereInput
+  lineItems_every?: LineItemWhereInput
+  lineItems_some?: LineItemWhereInput
+  lineItems_none?: LineItemWhereInput
 }
 
 export interface LineItemCreateWithoutProductInput {
@@ -3889,9 +3866,9 @@ export interface CategoryWhereInput {
   ingredients_none?: IngredientWhereInput
 }
 
-export interface OrderWhereInput {
-  AND?: OrderWhereInput[] | OrderWhereInput
-  OR?: OrderWhereInput[] | OrderWhereInput
+export interface CustomerWhereInput {
+  AND?: CustomerWhereInput[] | CustomerWhereInput
+  OR?: CustomerWhereInput[] | CustomerWhereInput
   id?: ID_Input
   id_not?: ID_Input
   id_in?: ID_Input[] | ID_Input
@@ -3906,26 +3883,115 @@ export interface OrderWhereInput {
   id_not_starts_with?: ID_Input
   id_ends_with?: ID_Input
   id_not_ends_with?: ID_Input
-  paid?: Boolean
-  paid_not?: Boolean
-  prepared?: Boolean
-  prepared_not?: Boolean
-  preparedAt?: DateTime
-  preparedAt_not?: DateTime
-  preparedAt_in?: DateTime[] | DateTime
-  preparedAt_not_in?: DateTime[] | DateTime
-  preparedAt_lt?: DateTime
-  preparedAt_lte?: DateTime
-  preparedAt_gt?: DateTime
-  preparedAt_gte?: DateTime
-  type?: StatusEnum
-  type_not?: StatusEnum
-  type_in?: StatusEnum[] | StatusEnum
-  type_not_in?: StatusEnum[] | StatusEnum
-  customer?: CustomerWhereInput
-  lineItems_every?: LineItemWhereInput
-  lineItems_some?: LineItemWhereInput
-  lineItems_none?: LineItemWhereInput
+  first?: String
+  first_not?: String
+  first_in?: String[] | String
+  first_not_in?: String[] | String
+  first_lt?: String
+  first_lte?: String
+  first_gt?: String
+  first_gte?: String
+  first_contains?: String
+  first_not_contains?: String
+  first_starts_with?: String
+  first_not_starts_with?: String
+  first_ends_with?: String
+  first_not_ends_with?: String
+  last?: String
+  last_not?: String
+  last_in?: String[] | String
+  last_not_in?: String[] | String
+  last_lt?: String
+  last_lte?: String
+  last_gt?: String
+  last_gte?: String
+  last_contains?: String
+  last_not_contains?: String
+  last_starts_with?: String
+  last_not_starts_with?: String
+  last_ends_with?: String
+  last_not_ends_with?: String
+  street?: String
+  street_not?: String
+  street_in?: String[] | String
+  street_not_in?: String[] | String
+  street_lt?: String
+  street_lte?: String
+  street_gt?: String
+  street_gte?: String
+  street_contains?: String
+  street_not_contains?: String
+  street_starts_with?: String
+  street_not_starts_with?: String
+  street_ends_with?: String
+  street_not_ends_with?: String
+  city?: String
+  city_not?: String
+  city_in?: String[] | String
+  city_not_in?: String[] | String
+  city_lt?: String
+  city_lte?: String
+  city_gt?: String
+  city_gte?: String
+  city_contains?: String
+  city_not_contains?: String
+  city_starts_with?: String
+  city_not_starts_with?: String
+  city_ends_with?: String
+  city_not_ends_with?: String
+  state?: String
+  state_not?: String
+  state_in?: String[] | String
+  state_not_in?: String[] | String
+  state_lt?: String
+  state_lte?: String
+  state_gt?: String
+  state_gte?: String
+  state_contains?: String
+  state_not_contains?: String
+  state_starts_with?: String
+  state_not_starts_with?: String
+  state_ends_with?: String
+  state_not_ends_with?: String
+  zip?: String
+  zip_not?: String
+  zip_in?: String[] | String
+  zip_not_in?: String[] | String
+  zip_lt?: String
+  zip_lte?: String
+  zip_gt?: String
+  zip_gte?: String
+  zip_contains?: String
+  zip_not_contains?: String
+  zip_starts_with?: String
+  zip_not_starts_with?: String
+  zip_ends_with?: String
+  zip_not_ends_with?: String
+  cardNum?: String
+  cardNum_not?: String
+  cardNum_in?: String[] | String
+  cardNum_not_in?: String[] | String
+  cardNum_lt?: String
+  cardNum_lte?: String
+  cardNum_gt?: String
+  cardNum_gte?: String
+  cardNum_contains?: String
+  cardNum_not_contains?: String
+  cardNum_starts_with?: String
+  cardNum_not_starts_with?: String
+  cardNum_ends_with?: String
+  cardNum_not_ends_with?: String
+  createdAt?: DateTime
+  createdAt_not?: DateTime
+  createdAt_in?: DateTime[] | DateTime
+  createdAt_not_in?: DateTime[] | DateTime
+  createdAt_lt?: DateTime
+  createdAt_lte?: DateTime
+  createdAt_gt?: DateTime
+  createdAt_gte?: DateTime
+  orders_every?: OrderWhereInput
+  orders_some?: OrderWhereInput
+  orders_none?: OrderWhereInput
 }
 
 export interface ProductSubscriptionWhereInput {
@@ -3938,55 +4004,9 @@ export interface ProductSubscriptionWhereInput {
   node?: ProductWhereInput
 }
 
-export interface LineItemWhereInput {
-  AND?: LineItemWhereInput[] | LineItemWhereInput
-  OR?: LineItemWhereInput[] | LineItemWhereInput
-  id?: ID_Input
-  id_not?: ID_Input
-  id_in?: ID_Input[] | ID_Input
-  id_not_in?: ID_Input[] | ID_Input
-  id_lt?: ID_Input
-  id_lte?: ID_Input
-  id_gt?: ID_Input
-  id_gte?: ID_Input
-  id_contains?: ID_Input
-  id_not_contains?: ID_Input
-  id_starts_with?: ID_Input
-  id_not_starts_with?: ID_Input
-  id_ends_with?: ID_Input
-  id_not_ends_with?: ID_Input
-  qty?: Int
-  qty_not?: Int
-  qty_in?: Int[] | Int
-  qty_not_in?: Int[] | Int
-  qty_lt?: Int
-  qty_lte?: Int
-  qty_gt?: Int
-  qty_gte?: Int
-  purchasePrice?: Int
-  purchasePrice_not?: Int
-  purchasePrice_in?: Int[] | Int
-  purchasePrice_not_in?: Int[] | Int
-  purchasePrice_lt?: Int
-  purchasePrice_lte?: Int
-  purchasePrice_gt?: Int
-  purchasePrice_gte?: Int
-  instructions?: String
-  instructions_not?: String
-  instructions_in?: String[] | String
-  instructions_not_in?: String[] | String
-  instructions_lt?: String
-  instructions_lte?: String
-  instructions_gt?: String
-  instructions_gte?: String
-  instructions_contains?: String
-  instructions_not_contains?: String
-  instructions_starts_with?: String
-  instructions_not_starts_with?: String
-  instructions_ends_with?: String
-  instructions_not_ends_with?: String
-  order?: OrderWhereInput
-  product?: ProductWhereInput
+export interface IngredientCreateManyWithoutCategoryInput {
+  create?: IngredientCreateWithoutCategoryInput[] | IngredientCreateWithoutCategoryInput
+  connect?: IngredientWhereUniqueInput[] | IngredientWhereUniqueInput
 }
 
 export interface UserWhereInput {
@@ -4243,7 +4263,7 @@ export interface OrderUpdateWithoutCustomerDataInput {
   paid?: Boolean
   prepared?: Boolean
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
   lineItems?: LineItemUpdateManyWithoutOrderInput
 }
 
@@ -4668,8 +4688,9 @@ export interface OrderPreviousValues {
   id: ID_Output
   paid?: Boolean
   prepared?: Boolean
+  createdAt: DateTime
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
 }
 
 /*
@@ -4733,8 +4754,9 @@ export interface Order extends Node {
   lineItems?: LineItem[]
   paid?: Boolean
   prepared?: Boolean
+  createdAt: DateTime
   preparedAt?: DateTime
-  type?: StatusEnum
+  isDelivery?: Boolean
 }
 
 export interface LineItemPreviousValues {

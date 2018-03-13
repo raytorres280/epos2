@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Row, Col, List, Button } from "antd";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
-import CartItemModel from '../models/CartItemModel'
+import { graphql, compose } from "react-apollo";
+import CartItemModel from "../models/CartItemModel";
 
 import OrderCreateOverview from "./OrderCreateOverview";
-
+import PayTerminal from './PayTerminal';
 class OrderPay extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -16,10 +16,41 @@ class OrderPay extends React.Component<any, any> {
   }
 
   componentWillReceiveProps(newProps: any) {
-    console.log(newProps.data);
+    console.log(newProps);
   }
+
+  handlePayWithCash() {
+    console.log("open register dispense change");
+    // this.state.
+  }
+
+  handlePayWithCard() {
+    console.log("insert card into reader");
+  }
+
+  payOrder() {
+    console.log('paying order...')
+    let { selectedOrder } = this.state
+    if (selectedOrder) {
+      this.props.updateOrderMutation({
+        variables: { id: selectedOrder.id }
+      })
+      .then(data => console.log(data))
+      .catch(err => console.log(err))
+    }
+  }
+
   render() {
-    let { data } = this.props;
+    let { unpaidOrdersQuery } = this.props;
+    console.log(this.state.selectedOrder);
+    let total;
+    if (this.state.selectedOrder) {
+      total = this.state.selectedOrder.lineItems.reduce((counter, item) => {
+        return counter + item.purchasePrice;
+      }, 0);
+    } else {
+      total = 0;
+    }
     return (
       <div>
         <Row>
@@ -27,7 +58,7 @@ class OrderPay extends React.Component<any, any> {
             <List
               loading={false}
               itemLayout="horizontal"
-              dataSource={data.ordersUnpaid || []}
+              dataSource={unpaidOrdersQuery.ordersUnpaid || []}
               renderItem={item => (
                 <List.Item
                   actions={[
@@ -48,27 +79,41 @@ class OrderPay extends React.Component<any, any> {
               )}
             />
           </Col>
-          <Col span={6}>
+          <Col span={7}>
             {this.state.selectedOrder ? (
               <OrderCreateOverview
-                cart={this.state.selectedOrder.lineItems.map(item => 
-                  new CartItemModel(item.product.id, item.product.name, 
-                    item.purchasePrice, item.qty, item.instructions
-                  ))
-                }
+                cart={this.state.selectedOrder.lineItems.map(
+                  item =>
+                    new CartItemModel(
+                      item.product.id,
+                      item.product.name,
+                      item.purchasePrice,
+                      item.qty,
+                      item.instructions
+                    )
+                )}
                 customer={this.state.selectedOrder.customer}
               />
             ) : (
               <div>no data</div>
             )}
           </Col>
-          <Col span={12}>payments</Col>
+          <Col span={11}>
+          <PayTerminal payOrder={this.payOrder} total={total} />
+          </Col>
         </Row>
       </div>
     );
   }
 }
-
+const updateOrderPaidStatusMutation = gql`
+  mutation updateOrderPaidStatus($id: String!) {
+    updateOrderPaidStatus(id: $id) {
+      id
+      paid
+    }
+  }
+`;
 const query = gql`
   {
     ordersUnpaid {
@@ -90,4 +135,9 @@ const query = gql`
     }
   }
 `;
-export default graphql<any, any>(query)(OrderPay);
+export default compose(
+  graphql<any, any>(query, { name: "unpaidOrdersQuery" }),
+  graphql<any, any>(updateOrderPaidStatusMutation, {
+    name: "updateOrderMutation"
+  })
+)(OrderPay);

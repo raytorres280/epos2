@@ -34,12 +34,9 @@ type Order {
   lineItems: [LineItem!]!
   paid: Boolean @default(value: false)
   prepared: Boolean @default(value: false)
+  createdAt: DateTime!
   preparedAt: DateTime @default(value: null)
-  type: StatusEnum @default(value: PICKUP)
-}
-enum StatusEnum {
-  PICKUP
-  DELIVERY
+  isDelivery: Boolean @default(value: false)
 }
 
 type LineItem {

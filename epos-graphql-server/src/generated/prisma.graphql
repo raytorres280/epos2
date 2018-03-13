@@ -46,8 +46,9 @@ type Order implements Node {
   lineItems(where: LineItemWhereInput, orderBy: LineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LineItem!]
   paid: Boolean
   prepared: Boolean
+  createdAt: DateTime!
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
 }
 
 type Post implements Node {
@@ -1752,7 +1753,7 @@ input OrderCreateInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerCreateOneWithoutOrdersInput!
   lineItems: LineItemCreateManyWithoutOrderInput
 }
@@ -1771,7 +1772,7 @@ input OrderCreateWithoutCustomerInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   lineItems: LineItemCreateManyWithoutOrderInput
 }
 
@@ -1779,7 +1780,7 @@ input OrderCreateWithoutLineItemsInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerCreateOneWithoutOrdersInput!
 }
 
@@ -1804,22 +1805,23 @@ enum OrderOrderByInput {
   paid_DESC
   prepared_ASC
   prepared_DESC
-  preparedAt_ASC
-  preparedAt_DESC
-  type_ASC
-  type_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
+  preparedAt_ASC
+  preparedAt_DESC
+  isDelivery_ASC
+  isDelivery_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type OrderPreviousValues {
   id: ID!
   paid: Boolean
   prepared: Boolean
+  createdAt: DateTime!
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
 }
 
 type OrderSubscriptionPayload {
@@ -1861,7 +1863,7 @@ input OrderUpdateInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerUpdateOneWithoutOrdersInput
   lineItems: LineItemUpdateManyWithoutOrderInput
 }
@@ -1888,7 +1890,7 @@ input OrderUpdateWithoutCustomerDataInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   lineItems: LineItemUpdateManyWithoutOrderInput
 }
 
@@ -1901,7 +1903,7 @@ input OrderUpdateWithoutLineItemsDataInput {
   paid: Boolean
   prepared: Boolean
   preparedAt: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   customer: CustomerUpdateOneWithoutOrdersInput
 }
 
@@ -1994,6 +1996,35 @@ input OrderWhereInput {
   All values that are not equal to given value.
   """
   prepared_not: Boolean
+  createdAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
   preparedAt: DateTime
   """
   All values that are not equal to given value.
@@ -2023,19 +2054,11 @@ input OrderWhereInput {
   All values greater than or equal the given value.
   """
   preparedAt_gte: DateTime
-  type: StatusEnum
+  isDelivery: Boolean
   """
   All values that are not equal to given value.
   """
-  type_not: StatusEnum
-  """
-  All values that are contained in given list.
-  """
-  type_in: [StatusEnum!]
-  """
-  All values that are not contained in given list.
-  """
-  type_not_in: [StatusEnum!]
+  isDelivery_not: Boolean
   customer: CustomerWhereInput
   lineItems_every: LineItemWhereInput
   lineItems_some: LineItemWhereInput
@@ -2767,11 +2790,6 @@ type Query {
   The ID of an object
   """
   id: ID!): Node
-}
-
-enum StatusEnum {
-  PICKUP
-  DELIVERY
 }
 
 type Subscription {
