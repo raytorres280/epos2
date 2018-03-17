@@ -43,7 +43,7 @@ const columns = [
     key: "price"
   },
   {
-    title: "special instructions",
+    title: "instructions",
     dataIndex: "instructions",
     key: "instructions"
   }

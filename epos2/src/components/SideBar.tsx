@@ -31,9 +31,6 @@ export default class SideBar extends React.Component<any, any> {
     this.setState({ selectedKey: this.props.location.pathname })
   }
   componentWillReceiveProps(newProps: any) {
-    console.log('getting new props')
-    console.log(this.props)
-    console.log('new', newProps)
     if (newProps.history.location.pathname.includes('/payments/')) {
       // if i got a payment with router info (orderID)
       console.log('payment jump to order')
@@ -43,11 +40,7 @@ export default class SideBar extends React.Component<any, any> {
     }
     
   }
-  componentWillUpdate(newProps: any, newState: any) {
-    console.log('updating..')
-  }
   render() {
-    console.log(this.props)
     return (
       <div className="logo">
         <Menu 

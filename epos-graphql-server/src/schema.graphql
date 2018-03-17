@@ -27,6 +27,7 @@ type Mutation {
   createCustomer(first: String!, last: String!,
   street: String, city: String, state: String, zip: String, cardNum: String): Customer!
   createOrder(customerId: String!, lineItems: [LineItemInput!]!): Order
+  updateOrderPreparedStatus(id: String!): Order
   updateOrderPaidStatus(id: String!): Order
 
 }

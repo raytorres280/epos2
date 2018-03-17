@@ -37,5 +37,16 @@ export const order = {
                 where: { id }
             }
         )
+    },
+
+    async updtaeOrderPreparedStatus(parent, { id }, ctx: Context, info) {
+        return ctx.db.mutation.updateOrder(
+            {
+                data: {
+                    prepared: true
+                },
+                where: { id }
+            }
+        )
     }
 }
