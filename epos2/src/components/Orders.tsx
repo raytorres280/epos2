@@ -17,7 +17,10 @@ class Orders extends React.Component<any, any> {
       columns: [{}],
     };
   }
-
+  onPay(order: any) {
+    console.log('go to payments route with this order passed to params')
+    this.props.history.push(`payments/${order.id}`)
+  }
   markOrderAsPrepared(order: any) {
     // handle the order update here
     this.setState({ loading: true })
@@ -62,7 +65,7 @@ class Orders extends React.Component<any, any> {
                     <Button
                       key={1}
                       size="large"
-                      onClick={() => console.log('go to payments route with this order passed to params')}
+                      onClick={() => this.onPay(order)}
                     >
                       Pay
                     </Button>
@@ -108,7 +111,10 @@ const query = gql`
   {
     orders {
       id
+      paid
+      prepared
       customer {
+        id
         first
         last
       }
@@ -121,8 +127,6 @@ const query = gql`
         purchasePrice
         qty
       }
-      paid
-      prepared
       createdAt
       isDelivery
     }

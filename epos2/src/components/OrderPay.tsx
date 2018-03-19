@@ -123,6 +123,8 @@ const query = gql`
   {
     ordersUnpaid {
       id
+      paid
+      prepared
       lineItems {
         qty
         instructions

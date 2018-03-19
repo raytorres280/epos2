@@ -37,7 +37,11 @@ class Main extends React.Component<any, any> {
           <Content>
             <Switch>
               <Route path="/new-order" component={NewOrder} />
-              <Route path="/orders" component={Orders} />
+              <Route 
+                path="/orders"
+                history={this.props.history}
+                render={props => <Orders {...props} />}
+              />
               <Route path="/customers" component={Customers} />
               <Route path="/inventory" component={Inventory} />
               <Route path="/dashboard" component={Dashboard} />
