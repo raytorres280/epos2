@@ -39,7 +39,7 @@ export const order = {
         )
     },
 
-    async updtaeOrderPreparedStatus(parent, { id }, ctx: Context, info) {
+    async updateOrderPreparedStatus(parent, { id }, ctx: Context, info) {
         return ctx.db.mutation.updateOrder(
             {
                 data: {

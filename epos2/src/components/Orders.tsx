@@ -1,10 +1,9 @@
 import * as React from "react";
 import { Table } from "antd";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
-import { Tabs, List, Card, Button, Input } from "antd";
+import { graphql, compose } from "react-apollo";
+import { Tabs, List, Card, Button } from "antd";
 const TabPane = Tabs.TabPane;
-// import MenuItem from "./MenuItem";
 
 export interface AppProps {}
 
@@ -16,20 +15,23 @@ class Orders extends React.Component<any, any> {
       orderToBeUpdated: [], // treat as queue that grows in case of server load.
       loadMore: false,
       columns: [{}],
-      Orders: [{}]
     };
   }
 
   markOrderAsPrepared(order: any) {
     // handle the order update here
     this.setState({ loading: true })
-    axios.put('', { id: order.id })
-    // do some kind of condition that makes sure loading is false,
-    // so that you cannot complete a second order until the first update comes back
-    // from async ... this.state.loading
+    this.props.updatePrepared({
+      variables: { id: order.id }
+    })
+    .then(data => {
+      // apollo update state automatically, just set state to loading: false
+      this.setState({ loading: false })
+    })
+    .catch(err => console.log(err))
   }
   render() {
-    let { orders } = this.props.data;
+    let { orders } = this.props.fetchAllOrders || [];
     return (
       <Tabs tabPosition={this.state.tabPosition}>
         <TabPane tab="Active" key="1">
@@ -37,24 +39,25 @@ class Orders extends React.Component<any, any> {
             grid={{ gutter: 16, column: 3 }}
             dataSource={
               orders
-                ? orders.filter(order => !order.paid && !order.prepared)
+                ? orders.filter(order => !order.paid || !order.prepared)
                 : orders
             }
-            renderItem={item => (
+            renderItem={order => (
               <List.Item>
                 <Card
-                  title={name}
-                  extra={<div style={styles.ticker}>{this.state.qty}</div>}
+                  title={order.id}
+                  extra={<div style={styles.ticker}>{order.lineItems.length}</div>}
                   actions={[
                     <Button
                       key={1}
                       size="large"
-                      onClick={() => this.setState({ qty: this.state.qty + 1 })}
+                      onClick={() => this.markOrderAsPrepared(order)}
                       type="primary"
-                      icon={!this.state.loading && item.prepared ? 'check' : 'null'}
-                      loading={this.state.loading && !item.prepared}
+                      icon={!this.state.loading && order.prepared ? 'check' : 'null'}
+                      loading={this.state.loading && !order.prepared}
+                      disabled={order.prepared}
                     >
-                      {!this.state.loading && item.prepared ? 'Done' : 'Complete Order'}
+                      {!this.state.loading && order.prepared ? 'Food ready' : 'Complete Order'}
                     </Button>,
                     <Button
                       key={1}
@@ -70,14 +73,7 @@ class Orders extends React.Component<any, any> {
                       "item.ingredients, dairy meat white flour"}
                   </p>
                   <p>instructions:</p>
-                  <Input
-                    size="large"
-                    placeholder="no pickles, no cheese, etc."
-                    value={this.state.instructions}
-                    onChange={e =>
-                      this.setState({ instructions: e.target.value })
-                    }
-                  />
+                  <h3>{order.prepared}</h3>
                 </Card>
               </List.Item>
             )}
@@ -132,8 +128,20 @@ const query = gql`
     }
   }
 `;
+const updatePrepared = gql`
+  mutation updateOrderPreparedStatus($id: String!) {
+    updateOrderPreparedStatus(id: $id) {
+      id
+      prepared
+      preparedAt
+    }
+  }
+`
 
-export default graphql<any, any>(query)(Orders);
+export default compose(
+  graphql<any, any>(query, { name: "fetchAllOrders" }),
+  graphql<any, any>(updatePrepared, { name: "updatePrepared" })
+)(Orders);
 
 const columns = [
   {

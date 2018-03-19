@@ -12,7 +12,7 @@ class OrderPay extends React.Component<any, any> {
     this.state = {
       selectedOrder: null
     };
-    console.log(props.match);
+    this.payOrder = this.payOrder.bind(this)
   }
 
   componentWillReceiveProps(newProps: any) {
@@ -33,9 +33,14 @@ class OrderPay extends React.Component<any, any> {
     let { selectedOrder } = this.state
     if (selectedOrder) {
       this.props.updateOrderMutation({
-        variables: { id: selectedOrder.id }
+        variables: { id: selectedOrder.id },
+        refetchQueries: [{ query }]
       })
-      .then(data => console.log(data))
+      .then(data => {
+        if (data.data.updateOrderPaidStatus.paid) {
+          this.setState({ selectedOrder: null })
+        }
+      })
       .catch(err => console.log(err))
     }
   }
