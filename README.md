@@ -1,3 +1,9 @@
+## NOTE
+Apollo Client's store/cache is picky af.
+If a component receives updated data but query fields are different or missing Id's,
+multiple components will not update correctly, and cause many strange render bugs.
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>

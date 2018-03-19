@@ -17,6 +17,13 @@ class OrderPay extends React.Component<any, any> {
 
   componentWillReceiveProps(newProps: any) {
     console.log(newProps);
+    if (this.props.match.params.orderId) {
+      let { ordersUnpaid } = this.props.unpaidOrdersQuery;
+      this.setState({
+        selectedOrder: ordersUnpaid.filter(order => 
+          this.props.match.params.orderId === order.id)[0]
+      })
+    }
   }
 
   handlePayWithCash() {
@@ -33,7 +40,8 @@ class OrderPay extends React.Component<any, any> {
     let { selectedOrder } = this.state
     if (selectedOrder) {
       this.props.updateOrderMutation({
-        variables: { id: selectedOrder.id }
+        variables: { id: selectedOrder.id },
+        refetchQueries: [{ query }] // used to account for paid order being removed from apollo cache/store.
       })
       .then(data => {
         if (data.data.updateOrderPaidStatus.paid) {
