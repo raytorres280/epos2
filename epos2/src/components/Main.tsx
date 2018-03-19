@@ -37,19 +37,11 @@ class Main extends React.Component<any, any> {
           <Content>
             <Switch>
               <Route path="/new-order" component={NewOrder} />
-              <Route 
-                path="/orders"
-                history={this.props.history}
-                render={props => <Orders {...props} />}
-              />
+              <Route path="/orders" component={Orders} />
               <Route path="/customers" component={Customers} />
               <Route path="/inventory" component={Inventory} />
               <Route path="/dashboard" component={Dashboard} />
-              <Route
-                path="/payments/:orderId?"
-                history={this.props.history}
-                render={props => <OrderPay {...props} />}
-              />
+              <Route path="/payments/:orderId?" component={OrderPay} />
               <Redirect from="/" to="/new-order" />
             </Switch>
           </Content>

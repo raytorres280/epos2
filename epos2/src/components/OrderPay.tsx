@@ -33,8 +33,7 @@ class OrderPay extends React.Component<any, any> {
     let { selectedOrder } = this.state
     if (selectedOrder) {
       this.props.updateOrderMutation({
-        variables: { id: selectedOrder.id },
-        refetchQueries: [{ query }]
+        variables: { id: selectedOrder.id }
       })
       .then(data => {
         if (data.data.updateOrderPaidStatus.paid) {
@@ -46,8 +45,7 @@ class OrderPay extends React.Component<any, any> {
   }
 
   render() {
-    let { unpaidOrdersQuery } = this.props;
-    console.log(this.state.selectedOrder);
+    let { ordersUnpaid } = this.props.unpaidOrdersQuery;
     let total;
     if (this.state.selectedOrder) {
       total = this.state.selectedOrder.lineItems.reduce((counter, item) => {
@@ -63,7 +61,7 @@ class OrderPay extends React.Component<any, any> {
             <List
               loading={false}
               itemLayout="horizontal"
-              dataSource={unpaidOrdersQuery.ordersUnpaid || []}
+              dataSource={ordersUnpaid || []}
               renderItem={item => (
                 <List.Item
                   actions={[
@@ -125,7 +123,10 @@ const query = gql`
       id
       paid
       prepared
+      createdAt
+      isDelivery
       lineItems {
+        id
         qty
         instructions
         purchasePrice

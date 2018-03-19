@@ -44,7 +44,6 @@ export default class SideBar extends React.Component<any, any> {
     return (
       <div className="logo">
         <Menu 
-          defaultSelectedKeys={['/new-order']}
           mode="inline"
           theme="dark"
           selectedKeys={[this.state.selectedKey]}
@@ -74,7 +73,7 @@ export default class SideBar extends React.Component<any, any> {
               </div>
             </Link>
           </Menu.Item>
-          <Menu.Item key="4">
+          <Menu.Item key="/inventory">
             <Link to="/inventory">
               <div>
                 <Icon style={{ fontSize: 25 }} type="shopping-cart" />

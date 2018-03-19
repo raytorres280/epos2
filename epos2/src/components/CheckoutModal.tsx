@@ -36,7 +36,10 @@ class CheckoutModal extends React.Component<any, any> {
           lineItems: this.formatLineItems(this.props.cart)
         }
       })
-      .then(res => this.setState({ createdOrder: res.data.createOrder, loading: false }))
+      .then(res => {
+        this.props.resetCart()
+        this.setState({ createdOrder: res.data.createOrder, loading: false })
+      })
       .catch(err => console.log(err));
   }
   formatLineItems(cart: CartItemModel[]) {

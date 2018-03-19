@@ -35,6 +35,7 @@ class NewOrder extends React.Component<any, any> {
     this.toggleCheckoutModal = this.toggleCheckoutModal.bind(this);
     this.createOrder = this.createOrder.bind(this);
     this.navigateToPayOrder = this.navigateToPayOrder.bind(this);
+    this.resetCart = this.resetCart.bind(this);
   }
   componentWillUnmount() {
     console.log('new order unmounting')
@@ -86,6 +87,10 @@ class NewOrder extends React.Component<any, any> {
     console.log("going to payment screen with order...", orderId);
     this.props.history.push(`payments/${orderId}`)
   }
+
+  resetCart() {
+    this.setState({ cart: [] })
+  }
   render() {
     let { cart, checkoutVisible } = this.state;
     return (
@@ -108,6 +113,7 @@ class NewOrder extends React.Component<any, any> {
             navigateToPayOrder={this.navigateToPayOrder}
             toggleSelf={this.toggleCheckoutModal}
             cart={cart}
+            resetCart={this.resetCart}
             showing={checkoutVisible}
           />
           <List

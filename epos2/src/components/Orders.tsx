@@ -17,6 +17,9 @@ class Orders extends React.Component<any, any> {
       columns: [{}],
     };
   }
+  componentWillUpdate(newProps: any, newState: any) {
+    console.log('updating...')
+  }
   onPay(order: any) {
     console.log('go to payments route with this order passed to params')
     this.props.history.push(`payments/${order.id}`)
@@ -46,7 +49,7 @@ class Orders extends React.Component<any, any> {
                 : orders
             }
             renderItem={order => (
-              <List.Item>
+              <List.Item key={order.id}>
                 <Card
                   title={order.id}
                   extra={<div style={styles.ticker}>{order.lineItems.length}</div>}
@@ -113,22 +116,23 @@ const query = gql`
       id
       paid
       prepared
+      createdAt
+      isDelivery
+      lineItems {
+        id
+        qty
+        instructions
+        purchasePrice
+        product {
+          id
+          name
+        }
+      }
       customer {
         id
         first
         last
       }
-      lineItems {
-        id
-        product {
-          id
-          name
-        }
-        purchasePrice
-        qty
-      }
-      createdAt
-      isDelivery
     }
   }
 `;
