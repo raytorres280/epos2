@@ -53,14 +53,15 @@ type Product {
   lineItems: [LineItem!]!
   price: Int!
   name: String!
-  ingredients: [Ingredient!]!
+  ingredients: [Ingredient!]! @relation(name: "ProductIngredient")
 }
 
 type Ingredient {
   id: ID! @unique
   name: String!
   category: Category!
-  qty: Int!
+  qty: Int @default(value: 0)
+  products: [Product!]! @relation(name: "ProductIngredient")
 }
 
 type Category {

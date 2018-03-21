@@ -29,6 +29,11 @@ type Mutation {
   createOrder(customerId: String!, lineItems: [LineItemInput!]!): Order
   updateOrderPreparedStatus(id: String!): Order
   updateOrderPaidStatus(id: String!): Order
+  createProduct(price: Int!, name: String!): Product
+  updateProduct(price: Int!, name: String!): Product
+  addIngredientToProduct(ingredientId: String!, productId: String!): Product
+  createIngredient(name: String!, categoryId: String): Ingredient
+  updateIngredient(name: String!, categoryId: String): Ingredient
 
 }
 

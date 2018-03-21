@@ -28,7 +28,8 @@ type Ingredient implements Node {
   id: ID!
   name: String!
   category(where: CategoryWhereInput): Category!
-  qty: Int!
+  qty: Int
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
 }
 
 type LineItem implements Node {
@@ -1024,13 +1025,9 @@ type IngredientConnection {
 
 input IngredientCreateInput {
   name: String!
-  qty: Int!
+  qty: Int
   category: CategoryCreateOneWithoutIngredientsInput!
-}
-
-input IngredientCreateManyInput {
-  create: [IngredientCreateInput!]
-  connect: [IngredientWhereUniqueInput!]
+  products: ProductCreateManyWithoutIngredientsInput
 }
 
 input IngredientCreateManyWithoutCategoryInput {
@@ -1038,9 +1035,21 @@ input IngredientCreateManyWithoutCategoryInput {
   connect: [IngredientWhereUniqueInput!]
 }
 
+input IngredientCreateManyWithoutProductsInput {
+  create: [IngredientCreateWithoutProductsInput!]
+  connect: [IngredientWhereUniqueInput!]
+}
+
 input IngredientCreateWithoutCategoryInput {
   name: String!
-  qty: Int!
+  qty: Int
+  products: ProductCreateManyWithoutIngredientsInput
+}
+
+input IngredientCreateWithoutProductsInput {
+  name: String!
+  qty: Int
+  category: CategoryCreateOneWithoutIngredientsInput!
 }
 
 """
@@ -1073,7 +1082,7 @@ enum IngredientOrderByInput {
 type IngredientPreviousValues {
   id: ID!
   name: String!
-  qty: Int!
+  qty: Int
 }
 
 type IngredientSubscriptionPayload {
@@ -1115,13 +1124,7 @@ input IngredientUpdateInput {
   name: String
   qty: Int
   category: CategoryUpdateOneWithoutIngredientsInput
-}
-
-input IngredientUpdateManyInput {
-  create: [IngredientCreateInput!]
-  connect: [IngredientWhereUniqueInput!]
-  disconnect: [IngredientWhereUniqueInput!]
-  delete: [IngredientWhereUniqueInput!]
+  products: ProductUpdateManyWithoutIngredientsInput
 }
 
 input IngredientUpdateManyWithoutCategoryInput {
@@ -1133,9 +1136,19 @@ input IngredientUpdateManyWithoutCategoryInput {
   upsert: [IngredientUpsertWithoutCategoryInput!]
 }
 
+input IngredientUpdateManyWithoutProductsInput {
+  create: [IngredientCreateWithoutProductsInput!]
+  connect: [IngredientWhereUniqueInput!]
+  disconnect: [IngredientWhereUniqueInput!]
+  delete: [IngredientWhereUniqueInput!]
+  update: [IngredientUpdateWithoutProductsInput!]
+  upsert: [IngredientUpsertWithoutProductsInput!]
+}
+
 input IngredientUpdateWithoutCategoryDataInput {
   name: String
   qty: Int
+  products: ProductUpdateManyWithoutIngredientsInput
 }
 
 input IngredientUpdateWithoutCategoryInput {
@@ -1143,10 +1156,27 @@ input IngredientUpdateWithoutCategoryInput {
   data: IngredientUpdateWithoutCategoryDataInput!
 }
 
+input IngredientUpdateWithoutProductsDataInput {
+  name: String
+  qty: Int
+  category: CategoryUpdateOneWithoutIngredientsInput
+}
+
+input IngredientUpdateWithoutProductsInput {
+  where: IngredientWhereUniqueInput!
+  data: IngredientUpdateWithoutProductsDataInput!
+}
+
 input IngredientUpsertWithoutCategoryInput {
   where: IngredientWhereUniqueInput!
   update: IngredientUpdateWithoutCategoryDataInput!
   create: IngredientCreateWithoutCategoryInput!
+}
+
+input IngredientUpsertWithoutProductsInput {
+  where: IngredientWhereUniqueInput!
+  update: IngredientUpdateWithoutProductsDataInput!
+  create: IngredientCreateWithoutProductsInput!
 }
 
 input IngredientWhereInput {
@@ -1294,6 +1324,9 @@ input IngredientWhereInput {
   """
   qty_gte: Int
   category: CategoryWhereInput
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
 }
 
 input IngredientWhereUniqueInput {
@@ -2487,7 +2520,12 @@ input ProductCreateInput {
   price: Int!
   name: String!
   lineItems: LineItemCreateManyWithoutProductInput
-  ingredients: IngredientCreateManyInput
+  ingredients: IngredientCreateManyWithoutProductsInput
+}
+
+input ProductCreateManyWithoutIngredientsInput {
+  create: [ProductCreateWithoutIngredientsInput!]
+  connect: [ProductWhereUniqueInput!]
 }
 
 input ProductCreateOneWithoutLineItemsInput {
@@ -2495,10 +2533,16 @@ input ProductCreateOneWithoutLineItemsInput {
   connect: ProductWhereUniqueInput
 }
 
+input ProductCreateWithoutIngredientsInput {
+  price: Int!
+  name: String!
+  lineItems: LineItemCreateManyWithoutProductInput
+}
+
 input ProductCreateWithoutLineItemsInput {
   price: Int!
   name: String!
-  ingredients: IngredientCreateManyInput
+  ingredients: IngredientCreateManyWithoutProductsInput
 }
 
 """
@@ -2573,7 +2617,16 @@ input ProductUpdateInput {
   price: Int
   name: String
   lineItems: LineItemUpdateManyWithoutProductInput
-  ingredients: IngredientUpdateManyInput
+  ingredients: IngredientUpdateManyWithoutProductsInput
+}
+
+input ProductUpdateManyWithoutIngredientsInput {
+  create: [ProductCreateWithoutIngredientsInput!]
+  connect: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  delete: [ProductWhereUniqueInput!]
+  update: [ProductUpdateWithoutIngredientsInput!]
+  upsert: [ProductUpsertWithoutIngredientsInput!]
 }
 
 input ProductUpdateOneWithoutLineItemsInput {
@@ -2585,15 +2638,32 @@ input ProductUpdateOneWithoutLineItemsInput {
   upsert: ProductUpsertWithoutLineItemsInput
 }
 
+input ProductUpdateWithoutIngredientsDataInput {
+  price: Int
+  name: String
+  lineItems: LineItemUpdateManyWithoutProductInput
+}
+
+input ProductUpdateWithoutIngredientsInput {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateWithoutIngredientsDataInput!
+}
+
 input ProductUpdateWithoutLineItemsDataInput {
   price: Int
   name: String
-  ingredients: IngredientUpdateManyInput
+  ingredients: IngredientUpdateManyWithoutProductsInput
 }
 
 input ProductUpdateWithoutLineItemsInput {
   where: ProductWhereUniqueInput!
   data: ProductUpdateWithoutLineItemsDataInput!
+}
+
+input ProductUpsertWithoutIngredientsInput {
+  where: ProductWhereUniqueInput!
+  update: ProductUpdateWithoutIngredientsDataInput!
+  create: ProductCreateWithoutIngredientsInput!
 }
 
 input ProductUpsertWithoutLineItemsInput {

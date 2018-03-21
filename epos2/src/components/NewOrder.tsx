@@ -80,6 +80,8 @@ class NewOrder extends React.Component<any, any> {
 
   toggleCheckoutModal() {
     console.log("toggling checkout modal");
+    // do hook or query here to determine if there are enough
+    // ingredients in inventory...
     this.setState({ checkoutVisible: !this.state.checkoutVisible });
   }
 
@@ -148,6 +150,11 @@ const query = gql`
       id
       name
       price
+      ingredients {
+        id
+        name
+        qty
+      }
     }
   }
 `;

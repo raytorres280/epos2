@@ -1,239 +1,255 @@
 mutation {
-  createUser(data: {
-    email: "developer@example.com"
-    password: "$2a$10$hACwQ5/HQI6FhbIISOUVeusy3sKyUDhSq36fF5d/54aAdiygJPFzm" # plaintext password: "nooneknows"
-    name: "Sarah"
-    posts: {
-      create: [{
-        title: "Hello World"
-        text: "This is my first blog post ever!"
-        isPublished: true
-      }, {
-        title: "My Second Post"
-        text: "My first post was good, but this one is better!"
-        isPublished: true
-      }, {
-        title: "Solving World Hunger"
-        text: "This is a draft..."
-        isPublished: false
-      }]
-    }
-  }) {
-    id
-  }
-
-  item1: createCustomer(data: {
-    first: "john"
-    last: "doe"
-    city: "nowhere"
-    state: "nj"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item2: createCustomer(data: {
-    first: "bubba"
-    last: "gump"
-    city: "jackson"
-    state: "MS"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item3: createCustomer(data: {
-    first: "Forrest"
-    last: "Gump"
-    city: "greenbow"
-    state: "AL"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item4: createCustomer(data: {
-    first: "Jenny"
-    last: "Gump"
-    city: "greenbow"
-    state: "AL"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item5: createCustomer(data: {
-    first: "Black"
-    last: "panther"
-    city: "party"
-    state: "DC"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item6: createCustomer(data: {
-    first: "Kanye"
-    last: "West"
-    city: "Chicago"
-    state: "IL"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item7: createCustomer(data: {
-    first: "Dave"
-    last: "east"
-    city: "new york"
-    state: "NY"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item8: createCustomer(data: {
-    first: "ASAP"
-    last: "Rocky"
-    city: "New York"
-    state: "NY"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item9: createCustomer(data: {
-    first: "ASAP"
-    last: "Ferg"
-    city: "New York"
-    state: "NY"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item10: createCustomer(data: {
-    first: "Hennuh"
-    last: "Si"
-    city: "Elizabeth"
-    state: "nj"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item11: createCustomer(data: {
-    first: "brian"
-    last: "oconnor"
-    city: "los angeles"
-    state: "CA"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  item12: createCustomer(data: {
-    first: "James"
-    last: "Bond"
-    city: "London"
-    state: "UK"
-    zip: "12345"
-    cardNum: "0123456789abcdef"
-  }) {
-    id
-  }
-
-  prod: createProduct(data: {
-    name: "hot dog"
-    price: 225
-  }) {
-    id
-  }
-  prod2: createProduct(data: {
-    name: "roast beef"
-    price: 500
-  }) {
-    id
-  }
-  prod3: createProduct(data: {
-    name: "chicken parm"
-    price: 800
-  }) {
-    id
-  }
-  prod4: createProduct(data: {
-    name: "pizza"
-    price: 900
-  }) {
-    id
-  }
-  newOrder: createOrder(data: {
-    customer: {
-      create: {
-        first: "out"
-        last: "of"
-        city: "names"
-        state: "NO"
-        zip: "12345"
-        cardNum: "0123456789abcdef"
+  createUser(
+    data: {
+      email: "developer@example.com"
+      password: "$2a$10$hACwQ5/HQI6FhbIISOUVeusy3sKyUDhSq36fF5d/54aAdiygJPFzm" # plaintext password: "nooneknows"
+      name: "Sarah"
+      posts: {
+        create: [
+          {
+            title: "Hello World"
+            text: "This is my first blog post ever!"
+            isPublished: true
+          }
+          {
+            title: "My Second Post"
+            text: "My first post was good, but this one is better!"
+            isPublished: true
+          }
+          {
+            title: "Solving World Hunger"
+            text: "This is a draft..."
+            isPublished: false
+          }
+        ]
       }
     }
-    lineItems: {
-      create: [
-        {
-          product: {
-            create: {
-              name: "royale with cheese"
-              price: 1000
-              ingredients: {
-                create: [
-                  {
-                    name: "cheese"
-                    category: {
-                      create: {
-                        name: "dairy"
-                      }
+  ) {
+    id
+  }
+
+  item1: createCustomer(
+    data: {
+      first: "john"
+      last: "doe"
+      city: "nowhere"
+      state: "nj"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item2: createCustomer(
+    data: {
+      first: "bubba"
+      last: "gump"
+      city: "jackson"
+      state: "MS"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item3: createCustomer(
+    data: {
+      first: "Forrest"
+      last: "Gump"
+      city: "greenbow"
+      state: "AL"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item4: createCustomer(
+    data: {
+      first: "Jenny"
+      last: "Gump"
+      city: "greenbow"
+      state: "AL"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item5: createCustomer(
+    data: {
+      first: "Black"
+      last: "panther"
+      city: "party"
+      state: "DC"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item6: createCustomer(
+    data: {
+      first: "Kanye"
+      last: "West"
+      city: "Chicago"
+      state: "IL"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item7: createCustomer(
+    data: {
+      first: "Dave"
+      last: "east"
+      city: "new york"
+      state: "NY"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item8: createCustomer(
+    data: {
+      first: "ASAP"
+      last: "Rocky"
+      city: "New York"
+      state: "NY"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item9: createCustomer(
+    data: {
+      first: "ASAP"
+      last: "Ferg"
+      city: "New York"
+      state: "NY"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item10: createCustomer(
+    data: {
+      first: "Hennuh"
+      last: "Si"
+      city: "Elizabeth"
+      state: "nj"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item11: createCustomer(
+    data: {
+      first: "brian"
+      last: "oconnor"
+      city: "los angeles"
+      state: "CA"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  item12: createCustomer(
+    data: {
+      first: "James"
+      last: "Bond"
+      city: "London"
+      state: "UK"
+      zip: "12345"
+      cardNum: "0123456789abcdef"
+    }
+  ) {
+    id
+  }
+
+  prod: createProduct(data: { name: "hot dog", price: 225 }) {
+    id
+  }
+  prod2: createProduct(data: { name: "roast beef", price: 500 }) {
+    id
+  }
+  prod3: createProduct(data: { name: "chicken parm", price: 800 }) {
+    id
+  }
+  prod4: createProduct(data: { name: "pizza", price: 900 }) {
+    id
+  }
+  newOrder: createOrder(
+    data: {
+      customer: {
+        create: {
+          first: "out"
+          last: "of"
+          city: "names"
+          state: "NO"
+          zip: "12345"
+          cardNum: "0123456789abcdef"
+        }
+      }
+      lineItems: {
+        create: [
+          {
+            product: {
+              create: {
+                name: "royale with cheese"
+                price: 1000
+                ingredients: {
+                  create: [
+                    {
+                      name: "cheese"
+                      category: { create: { name: "dairy" } }
+                      qty: 7
                     }
-                    qty: 7
-                  },
-                  {
-                    name: "ground beef"
-                    category: {
-                      create: {
-                        name: "beef"
-                      }
+                    {
+                      name: "ground beef"
+                      category: { create: { name: "beef" } }
+                      qty: 20
                     }
-                    qty: 20
-                  }
-                ]
+                  ]
+                }
               }
             }
           }
-        }
-      ]
+        ]
+      }
     }
-  }) {
+  ) {
     id
-    customer{
+    customer {
       first
     }
-    lineItems{
-      product{
+    lineItems {
+      product {
         name
       }
     }
   }
-
+  newCategory: createCategory(
+    data: { name: "none" }
+  ) {
+    id
+    name
+  }
 }
-
