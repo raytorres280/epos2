@@ -32,6 +32,7 @@ mutation {
     data: {
       first: "john"
       last: "doe"
+      street: "nowhere"
       city: "nowhere"
       state: "nj"
       zip: "12345"
@@ -45,6 +46,7 @@ mutation {
     data: {
       first: "bubba"
       last: "gump"
+      street: "nowhere"
       city: "jackson"
       state: "MS"
       zip: "12345"
@@ -58,6 +60,7 @@ mutation {
     data: {
       first: "Forrest"
       last: "Gump"
+      street: "nowhere"
       city: "greenbow"
       state: "AL"
       zip: "12345"
@@ -71,6 +74,7 @@ mutation {
     data: {
       first: "Jenny"
       last: "Gump"
+      street: "nowhere"
       city: "greenbow"
       state: "AL"
       zip: "12345"
@@ -84,6 +88,7 @@ mutation {
     data: {
       first: "Black"
       last: "panther"
+      street: "nowhere"
       city: "party"
       state: "DC"
       zip: "12345"
@@ -97,6 +102,7 @@ mutation {
     data: {
       first: "Kanye"
       last: "West"
+      street: "nowhere"
       city: "Chicago"
       state: "IL"
       zip: "12345"
@@ -110,6 +116,7 @@ mutation {
     data: {
       first: "Dave"
       last: "east"
+      street: "nowhere"
       city: "new york"
       state: "NY"
       zip: "12345"
@@ -123,6 +130,7 @@ mutation {
     data: {
       first: "ASAP"
       last: "Rocky"
+      street: "nowhere"
       city: "New York"
       state: "NY"
       zip: "12345"
@@ -136,6 +144,7 @@ mutation {
     data: {
       first: "ASAP"
       last: "Ferg"
+      street: "nowhere"
       city: "New York"
       state: "NY"
       zip: "12345"
@@ -149,6 +158,7 @@ mutation {
     data: {
       first: "Hennuh"
       last: "Si"
+      street: "nowhere"
       city: "Elizabeth"
       state: "nj"
       zip: "12345"
@@ -162,6 +172,7 @@ mutation {
     data: {
       first: "brian"
       last: "oconnor"
+      street: "nowhere"
       city: "los angeles"
       state: "CA"
       zip: "12345"
@@ -175,6 +186,7 @@ mutation {
     data: {
       first: "James"
       last: "Bond"
+      street: "nowhere"
       city: "London"
       state: "UK"
       zip: "12345"
@@ -202,6 +214,7 @@ mutation {
         create: {
           first: "out"
           last: "of"
+          street: "nowhere"
           city: "names"
           state: "NO"
           zip: "12345"

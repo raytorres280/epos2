@@ -26,6 +26,8 @@ type Mutation {
   deletePost(id: ID!): Post!
   createCustomer(first: String!, last: String!,
   street: String, city: String, state: String, zip: String, cardNum: String): Customer!
+  updateCustomer(first: String!, last: String!,
+  street: String, city: String, state: String, zip: String, cardNum: String, customerId: String!): Customer!
   createOrder(customerId: String!, lineItems: [LineItemInput!]!): Order
   updateOrderPreparedStatus(id: String!): Order
   updateOrderPaidStatus(id: String!): Order

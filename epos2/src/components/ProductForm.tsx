@@ -1,6 +1,7 @@
 import * as React from 'react';
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
+import { Form, Input } from "antd";
 export interface ProductFormProps {
 }
 
@@ -22,9 +23,29 @@ class ProductForm extends React.Component<ProductFormProps, any> {
     }
   render() {
     return (
-      <div>
-        product form
-      </div>
+        <Form>
+        <Form.Item>
+          <Input placeholder="first" />
+        </Form.Item>
+        <Form.Item>
+          <Input placeholder="last" />
+        </Form.Item>
+        <Form.Item>
+          <Input placeholder="street" />
+        </Form.Item>
+        <Form.Item>
+          <Input placeholder="city" />
+        </Form.Item>
+        <Form.Item>
+          <Input placeholder="state" />
+        </Form.Item>
+        <Form.Item>
+          <Input placeholder="zip" />
+        </Form.Item>
+        <Form.Item>
+          <Input placeholder="cardNum" />
+        </Form.Item>
+      </Form>
     );
   }
 }
